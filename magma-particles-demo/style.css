@@ -3,23 +3,173 @@ html {
     margin: 0;
     padding: 0;
     width: 100%;
-    height: 100%;
-    overflow: hidden;
-    background-color: #f5f5f7;
-    /* True Apple background color */
-    /* Refined Apple Font Stack */
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    overflow-x: hidden;
+    /* Allow vertical scrolling, prevent horizontal */
+    background-color: #ffffff;
+    /* Google white */
+    /* Google Antigravity style font stack. Tries to use Google Sans if available locally (common on Chrome/Android), otherwise Outfit/Roboto fallback */
+    font-family: 'Google Sans', 'Google Sans Text', 'Outfit', Roboto, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
 #particleCanvas {
+    position: fixed;
+    /* Fixed so it creates a nice parallax behind scroll items */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: none;
+    /* Let clicks pass through */
+}
+
+/* --- Navigation Bar (Google Antigravity Style) --- */
+.navbar {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
-    z-index: 1;
+    height: 64px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 40px;
+    box-sizing: border-box;
+    z-index: 50;
+    background: transparent;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-right: 48px;
+    font-weight: 500;
+    color: #1f1f1f;
+    font-size: 1.15rem;
+    /* Google sizing */
+    letter-spacing: -0.01em;
+}
+
+.nav-logo {
+    height: 32px;
+    /* Slightly larger, adjusting for the main logo aspect ratio */
+    width: auto;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 32px;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links li a {
+    text-decoration: none;
+    color: #444746;
+    font-size: 1rem;
+    font-weight: 400;
+    /* Google uses lighter weights for nav typically */
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.nav-links li a:hover {
+    color: #1f1f1f;
+}
+
+/* Dropdown */
+.dropdown {
+    /* Removed position: relative to allow children to position relative to navbar */
+    display: inline-block;
+}
+
+.chevron {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s ease;
+}
+
+.dropdown:hover .chevron {
+    transform: rotate(180deg);
+}
+
+.dropdown-content {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    top: 100%;
+    /* Immediately below the navbar */
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    box-shadow: 0px 12px 32px rgba(0, 0, 0, 0.08);
+    border-top: 1px solid #f1f3f4;
+    border-bottom: 1px solid #f1f3f4;
+    z-index: 60;
+
+    /* Smooth, elegant slide down - not too fast */
+    transform: translateY(-10px);
+    transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+}
+
+.dropdown:hover .dropdown-content {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.mega-menu-inner {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    padding: 40px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.mega-link {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px 32px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    flex: 1;
+    /* Make all items equal width */
+}
+
+.mega-link:hover {
+    background-color: #f8f9fa;
+    /* Subtle Google hover grey */
+}
+
+.mega-title {
+    color: #1f1f1f;
+    font-size: 1.15rem;
+    font-weight: 500;
+}
+
+.mega-desc {
+    color: #5f6368;
+    /* Google grey */
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+
+/* --- Sections --- */
+.hero-section {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    z-index: 10;
 }
 
 .content {
@@ -27,32 +177,220 @@ html {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    text-align: center;
-    z-index: 10;
-    pointer-events: none;
-    /* Let mouse interact with canvas behind text */
     width: 90%;
-    max-width: 900px;
+    max-width: 1200px;
+    pointer-events: none;
 }
 
-h1 {
-    font-size: 6.5rem;
-    font-weight: 700;
-    letter-spacing: -0.035em;
-    /* Tighter letter spacing characteristic of SF Pro Display */
-    margin: 0 0 0.15em 0;
-    color: #1d1d1f;
-    /* Standard Apple heading color */
-    line-height: 1.05;
+.hero-container {
+    display: flex;
+    flex-direction: column;
+    /* Stack vertically! */
+    align-items: center;
+    /* Center align */
+    justify-content: center;
+    gap: 30px;
 }
 
-p {
-    font-size: 1.75rem;
+.logo {
+    width: 250px;
+    /* Made smaller per request */
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.03));
+    animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.text-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1.typing-container {
+    font-size: 3.5rem;
+    /* Made bigger per request */
     font-weight: 500;
-    line-height: 1.35;
-    color: #86868b;
-    /* Apple standard subtext color */
-    margin: 0 auto;
-    letter-spacing: 0.005em;
-    max-width: 600px;
+    line-height: 1.2;
+    margin: 0;
+    letter-spacing: -0.015em;
+    text-align: center;
+    /* Center the text */
+    min-width: 800px;
+    /* Increase min width due to larger text */
+    min-height: 120px;
+    font-family: 'Google Sans', 'Outfit', sans-serif;
+}
+
+/* Transparent Text with Magma Gradient */
+.magma-text {
+    /* Subtle Magma gradient: Mostly dark grey, blending into magma colors at the very end */
+    background: linear-gradient(110deg, #1f1f1f 0%, #1f1f1f 65%, #3b0f70 80%, #b73779 92%, #f7705c 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    color: transparent !important;
+    text-shadow: none;
+    display: inline;
+}
+
+/* --- Blinking Cursor Animation --- */
+.cursor {
+    display: inline-block;
+    width: 3px;
+    /* Thin line cursor */
+    height: 1.1em;
+    /* Cursor color mostly dark, blending to magma pink/orange at the bottom */
+    background: linear-gradient(to bottom, #1f1f1f 0%, #1f1f1f 60%, #b73779 85%, #f7705c 100%);
+    margin-left: 4px;
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+}
+
+/* For formatting the inner HTML of the typewriter */
+.magma-text br {
+    display: block;
+    content: " ";
+    margin-top: 5px;
+}
+
+@keyframes fadeUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+/* --- Added Video Section --- */
+.demo-section {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    /* Full viewport height */
+    background-color: #000000;
+    z-index: 20;
+    overflow: hidden;
+}
+
+/* --- Left Side Dot Navigation --- */
+.dot-nav {
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    z-index: 30;
+    /* Always above video */
+}
+
+.dot-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    /* Smoother gap */
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.dot-item:hover {
+    opacity: 0.8;
+}
+
+.dot-item.active {
+    opacity: 1;
+}
+
+.dot-indicator {
+    width: 10px;
+    /* Make smaller */
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    /* Keep hollow */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    background-color: transparent;
+    /* Always transparent inside */
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dot-label {
+    color: #ffffff;
+    /* Contrast on video */
+    font-size: 1rem;
+    /* Match nav font size */
+    font-family: 'Google Sans', 'Outfit', sans-serif;
+    font-weight: 400;
+    /* Match nav weight */
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    /* Shadow for readability on video */
+}
+
+/* Show label when active or hovered */
+.dot-item.active .dot-label,
+.dot-item:hover .dot-label {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Magma Gradient Coloring for Active Dots - only change outline and glow, keep hollow */
+.dot-item.active.group-1 .dot-indicator {
+    border-color: #f7705c;
+    box-shadow: 0 0 15px rgba(247, 112, 92, 0.6);
+}
+
+.dot-item.active.group-2 .dot-indicator {
+    border-color: #b73779;
+    box-shadow: 0 0 15px rgba(183, 55, 121, 0.6);
+}
+
+.dot-item.active.group-3 .dot-indicator {
+    border-color: #3b0f70;
+    box-shadow: 0 0 15px rgba(59, 15, 112, 0.6);
+}
+
+.dot-item:hover:not(.active) .dot-indicator {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.video-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    /* Behind text */
+}
+
+.demo-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Fill the entire section, cropping if necessary */
+    display: block;
 }

@@ -5,16 +5,93 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dr. XAS</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="drxas_logo_small.png">
+
+    <!-- Import standard Google Fonts used by Google properties (Outfit and Roboto as close proxies if Google Sans isn't locally available, but we'll prioritize Google Sans) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css?v=17">
 </head>
 
 <body>
-    <div class="content">
-        <h1>Dr. XAS</h1>
-        <p>The next generation AI companion for X-ray absorption spectroscopy.</p>
-    </div>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <!-- Updated to use the main logo per request -->
+            <img src="drxas_logo.png" alt="Dr. XAS Logo" class="nav-logo">
+        </div>
+        <ul class="nav-links">
+            <li><a href="#">Introduction</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropbtn">Demo <svg class="chevron" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2">
+                        <path d="M6 9l6 6 6-6" />
+                    </svg></a>
+                <div class="dropdown-content">
+                    <div class="mega-menu-inner">
+                        <a href="#demo-drxas" class="mega-link">
+                            <span class="mega-title">Dr. XAS</span>
+                            <span class="mega-desc">The AI companion for X-ray absorption spectroscopy.</span>
+                        </a>
+                        <a href="#" class="mega-link">
+                            <span class="mega-title">EasyXASCalc</span>
+                            <span class="mega-desc">Advanced calculation and spectrum analysis.</span>
+                        </a>
+                        <a href="#" class="mega-link">
+                            <span class="mega-title">XASbenchmark</span>
+                            <span class="mega-desc">Standardized datasets and benchmarking tools.</span>
+                        </a>
+                    </div>
+                </div>
+            </li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+        <div class="nav-actions">
+        </div>
+    </nav>
+
     <canvas id="particleCanvas"></canvas>
-    <script src="script.js"></script>
+
+    <section class="hero-section">
+        <div class="content">
+            <div class="hero-container">
+                <img src="drxas_logo.png" alt="Dr. XAS Logo" class="logo">
+                <div class="text-content">
+                    <!-- Switched to JS typewriter container -->
+                    <h1 class="typing-container">
+                        <span class="magma-text" id="typewriter-text"></span><span class="cursor" id="cursor"></span>
+                    </h1>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Dr. XAS Demo Video Section -->
+    <section class="demo-section" id="demo-drxas">
+        <div class="video-wrapper">
+            <video src="assets/demo/dr_xas.mov" autoplay loop muted playsinline class="demo-video"></video>
+        </div>
+
+        <!-- Left Side Dot Navigation -->
+        <nav class="dot-nav">
+            <div class="dot-item active group-1">
+                <span class="dot-indicator"></span>
+                <span class="dot-label">Dr. XAS</span>
+            </div>
+            <div class="dot-item group-2">
+                <span class="dot-indicator"></span>
+                <span class="dot-label">EasyXASCalc</span>
+            </div>
+            <div class="dot-item group-3">
+                <span class="dot-indicator"></span>
+                <span class="dot-label">XASbenchmark</span>
+            </div>
+        </nav>
+    </section>
+
+    <script src="script.js?v=17"></script>
 </body>
 
 </html>
