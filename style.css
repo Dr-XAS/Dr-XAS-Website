@@ -1,0 +1,665 @@
+body,
+html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    overflow-x: hidden;
+    /* Allow vertical scrolling, prevent horizontal */
+    background-color: #ffffff;
+    /* Google white */
+    /* Google Antigravity style font stack. Tries to use Google Sans if available locally (common on Chrome/Android), otherwise Outfit/Roboto fallback */
+    font-family: 'Google Sans', 'Google Sans Text', 'Outfit', Roboto, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+#particleCanvas {
+    position: fixed;
+    /* Fixed so it creates a nice parallax behind scroll items */
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 1;
+    pointer-events: none;
+    /* Let clicks pass through */
+}
+
+/* --- Navigation Bar (Google Antigravity Style) --- */
+.navbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 64px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 0 40px;
+    box-sizing: border-box;
+    z-index: 50;
+    background: transparent;
+}
+
+.nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-right: 48px;
+    font-weight: 500;
+    color: #1f1f1f;
+    font-size: 1.15rem;
+    /* Google sizing */
+    letter-spacing: -0.01em;
+}
+
+.nav-logo {
+    height: 32px;
+    /* Slightly larger, adjusting for the main logo aspect ratio */
+    width: auto;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 32px;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links li a {
+    text-decoration: none;
+    color: #444746;
+    font-size: 1rem;
+    font-weight: 400;
+    /* Google uses lighter weights for nav typically */
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.nav-links li a:hover {
+    color: #1f1f1f;
+}
+
+/* Dropdown */
+.dropdown {
+    /* Removed position: relative to allow children to position relative to navbar */
+    display: inline-block;
+}
+
+.chevron {
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s ease;
+}
+
+.dropdown:hover .chevron {
+    transform: rotate(180deg);
+}
+
+.dropdown-content {
+    visibility: hidden;
+    opacity: 0;
+    position: absolute;
+    top: 100%;
+    /* Immediately below the navbar */
+    left: 0;
+    width: 100%;
+    background-color: #ffffff;
+    box-shadow: 0px 12px 32px rgba(0, 0, 0, 0.08);
+    border-top: 1px solid #f1f3f4;
+    border-bottom: 1px solid #f1f3f4;
+    z-index: 60;
+
+    /* Smooth, elegant slide down - not too fast */
+    transform: translateY(-10px);
+    transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
+}
+
+.dropdown:hover .dropdown-content {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.mega-menu-inner {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    padding: 40px 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.mega-link {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 24px 32px;
+    border-radius: 12px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    flex: 1;
+    /* Make all items equal width */
+}
+
+.mega-link:hover {
+    background-color: #f8f9fa;
+    /* Subtle Google hover grey */
+}
+
+.mega-title {
+    color: #1f1f1f;
+    font-size: 1.15rem;
+    font-weight: 500;
+}
+
+.mega-desc {
+    color: #5f6368;
+    /* Google grey */
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+
+/* --- Sections --- */
+.hero-section {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    z-index: 10;
+}
+
+.content {
+    position: absolute;
+    top: calc(42% + 50px);
+    /* Raised 150px from +200px per user request */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 1200px;
+    pointer-events: none;
+}
+
+.hero-container {
+    display: flex;
+    flex-direction: column;
+    /* Stack vertically! */
+    align-items: center;
+    /* Center align */
+    justify-content: center;
+    gap: 30px;
+}
+
+.logo {
+    width: 250px;
+    /* Made smaller per request */
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.03));
+    animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.text-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1.typing-container {
+    font-size: 3.5rem;
+    /* Made bigger per request */
+    font-weight: 500;
+    line-height: 1.2;
+    margin: 0;
+    letter-spacing: -0.015em;
+    text-align: center;
+    /* Center the text */
+    min-width: 800px;
+    /* Increase min width due to larger text */
+    min-height: 120px;
+    font-family: 'Google Sans', 'Outfit', sans-serif;
+}
+
+/* Transparent Text with Magma Gradient */
+.magma-text {
+    /* Subtle Magma gradient: Mostly dark grey, blending into magma colors at the very end */
+    background: linear-gradient(110deg, #1f1f1f 0%, #1f1f1f 65%, #3b0f70 80%, #b73779 92%, #f7705c 100%) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+    background-clip: text !important;
+    color: transparent !important;
+    text-shadow: none;
+    display: inline;
+}
+
+/* --- Blinking Cursor Animation --- */
+.cursor {
+    display: inline-block;
+    width: 3px;
+    /* Thin line cursor */
+    height: 1.1em;
+    /* Cursor color mostly dark, blending to magma pink/orange at the bottom */
+    background: linear-gradient(to bottom, #1f1f1f 0%, #1f1f1f 60%, #b73779 85%, #f7705c 100%);
+    margin-left: 4px;
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+}
+
+/* --- Hero Action Buttons --- */
+.hero-buttons {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+    /* Gives some breathing room after the large hero text */
+    justify-content: center;
+    opacity: 0;
+    pointer-events: auto;
+    /* Re-enable clicks since parent .content has none */
+    /* Delay the buttons to fade in strictly AFTER the typing animation completes (~3s) */
+    animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 3s;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 28px;
+    width: 180px;
+    /* Fixed width so both buttons match perfectly */
+    box-sizing: border-box;
+    border-radius: 40px;
+    /* Fully rounded pill shape */
+    font-size: 1.15rem;
+    font-family: 'Google Sans', 'Outfit', sans-serif;
+    font-weight: 500;
+    text-decoration: none;
+    transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.btn:active {
+    transform: scale(0.97);
+}
+
+.btn-primary {
+    /* Dark Magma gradient (purple to red, no orange) with slight transparency */
+    background: linear-gradient(135deg, rgba(31, 0, 92, 0.85) 0%, rgba(183, 55, 121, 0.85) 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    opacity: 0.9;
+}
+
+.btn-secondary {
+    background-color: rgba(245, 245, 247, 0.7);
+    color: #111111;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.btn-secondary:hover {
+    background-color: #ebebed;
+}
+
+/* For formatting the inner HTML of the typewriter */
+.magma-text br {
+    display: block;
+    content: " ";
+    margin-top: 5px;
+}
+
+@keyframes fadeUp {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}
+
+/* --- Added Video Section --- */
+.demo-section {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    /* Full viewport height */
+    background-color: #000000;
+    z-index: 20;
+    overflow: hidden;
+}
+
+/* --- Left Side Dot Navigation --- */
+.dot-nav {
+    position: absolute;
+    left: 40px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    z-index: 30;
+    /* Always above video */
+}
+
+.dot-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    /* Smoother gap */
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.dot-item:hover {
+    opacity: 0.8;
+}
+
+.dot-item.active {
+    opacity: 1;
+}
+
+.dot-indicator {
+    width: 10px;
+    /* Make smaller */
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid #ffffff;
+    /* Keep hollow */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    background-color: transparent;
+    /* Always transparent inside */
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dot-label {
+    color: #ffffff;
+    /* Contrast on video */
+    font-size: 1rem;
+    /* Match nav font size */
+    font-family: 'Google Sans', 'Outfit', sans-serif;
+    font-weight: 400;
+    /* Match nav weight */
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    /* Shadow for readability on video */
+}
+
+/* Show label when active or hovered */
+.dot-item.active .dot-label,
+.dot-item:hover .dot-label {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Magma Gradient Coloring for Active Dots - only change outline and glow, keep hollow */
+.dot-item.active.group-1 .dot-indicator {
+    border-color: #f7705c;
+    box-shadow: 0 0 15px rgba(247, 112, 92, 0.6);
+}
+
+.dot-item.active.group-2 .dot-indicator {
+    border-color: #b73779;
+    box-shadow: 0 0 15px rgba(183, 55, 121, 0.6);
+}
+
+.dot-item.active.group-3 .dot-indicator {
+    border-color: #3b0f70;
+    box-shadow: 0 0 15px rgba(59, 15, 112, 0.6);
+}
+
+.dot-item:hover:not(.active) .dot-indicator {
+    background-color: rgba(255, 255, 255, 0.3);
+}
+
+.video-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    /* Behind text */
+}
+
+.demo-video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Fill the entire section, cropping if necessary */
+    display: block;
+}
+
+/* --- Modern Footer --- */
+.site-footer {
+    position: relative;
+    background: rgba(255, 255, 255, 1);
+    color: #1f1f1f;
+    padding: 60px 40px 40px;
+    font-family: 'Outfit', sans-serif;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    /* Subtle dark border top */
+    z-index: 100;
+}
+
+.footer-bottom-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 60px;
+}
+
+.footer-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.footer-right {
+    flex: 0 0 350px;
+    /* Fixed width for the chatbox */
+}
+
+/* --- Left Side Content --- */
+.footer-socials {
+    display: flex;
+    gap: 24px;
+}
+
+.footer-socials a {
+    transition: color 0.3s ease, transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Darker Magma Colors for Logos */
+.footer-socials a.social-github {
+    color: #3b0f70;
+    /* Darker Magma Purple */
+}
+
+.footer-socials a.social-twitter {
+    color: #8c2981;
+    /* Dark Magma Magenta */
+}
+
+.footer-socials a.social-discord {
+    color: #de4968;
+    /* Magma deep red/pink */
+}
+
+.footer-socials a:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.2);
+    /* Slight brightening on hover */
+}
+
+.footer-links-row {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+}
+
+.footer-links-row a {
+    color: #5f6368;
+    /* Google grey */
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+}
+
+.footer-links-row a:hover {
+    color: #1f1f1f;
+}
+
+.footer-ldrd-support {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #5f6368;
+    /* Google grey */
+    max-width: 500px;
+}
+
+.footer-copyright {
+    font-size: 0.85rem;
+    color: #9aa0a6;
+    /* Lighter grey */
+}
+
+/* --- Chatbox --- */
+.chatbox-container {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    height: 100%;
+    box-sizing: border-box;
+    font-family: 'Google Sans', 'Outfit', sans-serif;
+}
+
+.chatbox-title {
+    color: #1f1f1f;
+    margin: 0 0 20px 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.chatbox-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.chatbox-input,
+.chatbox-textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    color: #333;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+    box-sizing: border-box;
+}
+
+.chatbox-input:focus,
+.chatbox-textarea:focus {
+    outline: none;
+    border-color: #b73779;
+    /* Magma color focus */
+    background-color: #ffffff;
+}
+
+.chatbox-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.chatbox-submit {
+    background: linear-gradient(135deg, rgba(140, 41, 129, 0.9) 0%, rgba(222, 73, 104, 0.9) 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    font-family: inherit;
+}
+
+.chatbox-submit:hover {
+    opacity: 0.9;
+}
+
+.chatbox-submit:active {
+    transform: scale(0.98);
+}
+
+/* Footer Responsiveness */
+@media (max-width: 900px) {
+    .footer-bottom-container {
+        flex-direction: column-reverse;
+        align-items: stretch;
+        gap: 40px;
+    }
+
+    .footer-right {
+        flex: none;
+        width: 100%;
+    }
+
+    .footer-left {
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer-links-row {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .site-footer {
+        padding: 40px 20px;
+    }
+
+    .footer-links-row {
+        gap: 20px;
+        flex-direction: column;
+        align-items: center;
+    }
+}
