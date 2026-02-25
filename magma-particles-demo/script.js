@@ -4,10 +4,13 @@ const ctx = canvas.getContext('2d');
 let width, height;
 let particles = [];
 let lines = [];
+// Global variables for EXAFS data
+let waveletData = null;
+let gridResolutionX = 50;
+let gridResolutionZ = 50;
+
 // Create a grid for the 3D surface
-const gridResolutionX = 50;
-const gridResolutionZ = 50;
-const numParticles = gridResolutionX * gridResolutionZ;
+// numParticles will be dynamically calculated now
 
 // Mouse interaction for subtle parallax
 const mouse = {
@@ -45,7 +48,9 @@ window.addEventListener('mouseout', () => {
 function resizeCanvas() {
     width = canvas.width = window.innerWidth;
     height = canvas.height = window.innerHeight;
-    initParticles();
+    if (waveletData) {
+        initParticles(waveletData);
+    }
 }
 
 window.addEventListener('resize', resizeCanvas);
@@ -73,20 +78,18 @@ function getMagmaColorRGBA(value, alpha = 1) {
 }
 
 class Particle {
-    constructor(gridX, gridZ) {
-        // Base 3D coordinates based on grid
-        // Spread the grid out
-        const spreadX = 25;
-        const spreadZ = 25;
+    constructor(gridX, gridZ, yVal) {
+        // Spread the grid out. Adjust these based on the new dense dataset size to fit screen.
+        // We have ~100x117 points, so smaller spread is needed than the 50x50 grid
+        const spreadX = 12;
+        const spreadZ = 12;
         this.baseX = (gridX - gridResolutionX / 2) * spreadX;
         this.baseZ = (gridZ - gridResolutionZ / 2) * spreadZ;
 
-        // Calculate Y based on 3D sin function
-        // f(x,z) = sin(x) * cos(z) or similar
-        const freqX = 0.05;
-        const freqZ = 0.05;
-        const amplitude = 150;
-        this.baseY = Math.sin(this.baseX * freqX) * Math.cos(this.baseZ * freqZ) * amplitude;
+        // Use the loaded EXAFS wavelet value for height.
+        // In Canvas, smaller Y is "up". So negate yVal to make peaks point upwards.
+        const amplitude = 400;
+        this.baseY = -yVal * amplitude + 150;
 
         // Current 3D position (starts at base)
         this.x3d = this.baseX;
@@ -94,15 +97,11 @@ class Particle {
         this.z3d = this.baseZ;
 
         // Visual properties
-        this.size = 1.5;
+        this.size = 1.8; // Increased for dense grid
 
-        // Color based on height (Y)
-        // Normalize Y from roughly [-amplitude, amplitude] to [0, 1]
-        const normalizedHeight = (this.baseY + amplitude) / (amplitude * 2);
-        // Map so highest peaks are yellow (1), valleys are dark purple (0)
-        // We cap at 0.8 so it doesn't wash out on white
-        this.colorVal = normalizedHeight;
-        this.color = getMagmaColorRGBA(this.colorVal * 0.85);
+        // Color based on height (Y). yVal is already 0-1 normalized
+        this.colorVal = yVal;
+        this.color = getMagmaColorRGBA(this.colorVal * 0.95);
 
         // 2D projection coordinates
         this.x2d = 0;
@@ -112,17 +111,19 @@ class Particle {
         // Grid indices for line drawing
         this.i = gridX;
         this.j = gridZ;
+
+        // Save the amplitude for animation
+        this.amplitude = amplitude;
     }
 
     update(time) {
         // Subtle animation of the surface over time
-        const freqX = 0.03;
-        const freqZ = 0.04;
-        const amplitude = 120;
-        const timeOffset = time * 0.001;
+        // Just a gentle breathing effect so the static image feels alive
+        const timeOffset = time * 0.0005;
+        const breath = Math.sin(timeOffset + this.baseX * 0.01 + this.baseZ * 0.01) * 15;
 
         // Animated Y
-        this.y3d = Math.sin(this.baseX * freqX + timeOffset) * Math.cos(this.baseZ * freqZ + timeOffset) * amplitude;
+        this.y3d = this.baseY + breath;
 
         // Subtle mouse parallax effect
         // Rotate the entire scene slightly based on mouse position
@@ -133,7 +134,11 @@ class Particle {
         mouse.currentX += (mouse.targetX - mouse.currentX) * 0.05;
         mouse.currentY += (mouse.targetY - mouse.currentY) * 0.05;
 
+        // Look down slightly more to see the structure
         let rotX = mouse.currentY * maxRotationX;
+        let rotX_base = 0.8;
+        rotX += rotX_base;
+
         let rotY = mouse.currentX * maxRotationY;
 
         // Apply rotation around X axis (tilt up/down)
@@ -141,28 +146,26 @@ class Particle {
         let z1 = this.y3d * Math.sin(rotX) + this.baseZ * Math.cos(rotX);
 
         // Apply rotation around Y axis (pan left/right)
+        // Adjust the center point so we spin mostly around the main peak area
         let x2 = this.baseX * Math.cos(rotY) + z1 * Math.sin(rotY);
         let z2 = -this.baseX * Math.sin(rotY) + z1 * Math.cos(rotY);
         let y2 = y1;
 
-        // Tilt the whole plane forward slightly so we look down on it
-        const baseTilt = 0.5; // radians
-        let y3 = y2 * Math.cos(baseTilt) - z2 * Math.sin(baseTilt);
-        let z3 = y2 * Math.sin(baseTilt) + z2 * Math.cos(baseTilt);
-
         // 3D to 2D Projection
         // Move scene back in Z so it's in front of camera
         const sceneZOffset = 500;
-        const finalZ = z3 + sceneZOffset;
+        const finalZ = z2 + sceneZOffset;
 
         // Project
         this.scale = camera.fov / (camera.fov + finalZ);
-        this.x2d = x2 * this.scale + width / 2;
-        this.y2d = y3 * this.scale + height / 2 + 100; // Shift down slightly
+        // Translate right slightly to center the plot nicely in the viewport
+        this.x2d = x2 * this.scale + width / 2 + 100;
+        // Shifted up to middle of screen
+        this.y2d = y2 * this.scale + height / 2 - 50;
 
         // Update color alpha based on depth (fade out in distance)
         const depthAlpha = Math.max(0.1, Math.min(1, this.scale * 1.5));
-        this.color = getMagmaColorRGBA(this.colorVal * 0.85, depthAlpha);
+        this.color = getMagmaColorRGBA(this.colorVal * 0.95, depthAlpha);
     }
 
     draw() {
@@ -175,16 +178,23 @@ class Particle {
     }
 }
 
-function initParticles() {
+function initParticles(data) {
     particles = [];
+    gridResolutionX = data.rows; // 109
+    gridResolutionZ = data.cols; // 117
+
     // Create a 2D array to easily form grid lines
     let grid = [];
+
+    let index = 0;
     for (let i = 0; i < gridResolutionX; i++) {
         let row = [];
         for (let j = 0; j < gridResolutionZ; j++) {
-            let p = new Particle(i, j);
+            let yVal = data.data[index];
+            let p = new Particle(i, j, yVal);
             particles.push(p);
             row.push(p);
+            index++;
         }
         grid.push(row);
     }
@@ -193,31 +203,35 @@ function initParticles() {
     lines = [];
     for (let i = 0; i < gridResolutionX; i++) {
         for (let j = 0; j < gridResolutionZ; j++) {
+            // Because the grid is so dense, only draw lines every Nth point to avoid clutter
+            const sparseFactor = 2; // draw lines between every 2nd point 
+
             // Connect to right neighbor
-            if (i < gridResolutionX - 1) {
+            if (i < gridResolutionX - sparseFactor && j % sparseFactor === 0) {
                 // Sparsely connect for a cleaner look
-                if (Math.random() > 0.3) {
-                    lines.push([grid[i][j], grid[i + 1][j]]);
-                }
+                lines.push([grid[i][j], grid[i + sparseFactor][j]]);
             }
             // Connect to bottom neighbor
-            if (j < gridResolutionZ - 1) {
-                if (Math.random() > 0.3) {
-                    lines.push([grid[i][j], grid[i][j + 1]]);
-                }
+            if (j < gridResolutionZ - sparseFactor && i % sparseFactor === 0) {
+                lines.push([grid[i][j], grid[i][j + sparseFactor]]);
             }
         }
     }
 }
 
 function animate(time) {
+    if (!waveletData) {
+        requestAnimationFrame(animate);
+        return;
+    }
+
     ctx.clearRect(0, 0, width, height);
 
     // Update all particles
     particles.forEach(p => p.update(time));
 
     // Draw lines first so they are underneath points
-    ctx.lineWidth = 0.5;
+    ctx.lineWidth = 0.4;
     lines.forEach(pair => {
         const p1 = pair[0];
         const p2 = pair[1];
@@ -237,8 +251,10 @@ function animate(time) {
                 // Use a blended highly transparent magma color for the line
                 // Base it on the average height of the two points
                 const avgColorVal = (p1.colorVal + p2.colorVal) / 2;
-                // High transparency for elegance
-                ctx.strokeStyle = getMagmaColorRGBA(avgColorVal * 0.8, 0.15 * p1.scale);
+
+                // Draw lines brighter if they correspond to peaks (high value)
+                const alpha = Math.max(0.1, avgColorVal * 0.4 * p1.scale);
+                ctx.strokeStyle = getMagmaColorRGBA(avgColorVal * 0.9, alpha);
                 ctx.stroke();
             }
         }
@@ -250,5 +266,54 @@ function animate(time) {
     requestAnimationFrame(animate);
 }
 
-resizeCanvas();
+// Fetch the newly generated EXAFS wavelet json
+fetch('wavelet_data.json')
+    .then(response => response.json())
+    .then(data => {
+        waveletData = data;
+        resizeCanvas();
+    })
+    .catch(err => console.error("Could not load wavelet_data.json:", err));
+
 requestAnimationFrame(animate);
+
+// --- Elegant Typewriter Effect ---
+const typewriterTextElement = document.getElementById('typewriter-text');
+const fullText = "The next generation AI companion<br>for X-ray absorption spectroscopy.";
+
+// Parse text to handle HTML tags like <br> natively
+const typeArray = [];
+let inTag = false;
+let currentTagStr = "";
+
+for (let i = 0; i < fullText.length; i++) {
+    const char = fullText[i];
+    if (char === '<') {
+        inTag = true;
+        currentTagStr = '<';
+    } else if (inTag) {
+        currentTagStr += char;
+        if (char === '>') {
+            inTag = false;
+            typeArray.push(currentTagStr);
+            currentTagStr = "";
+        }
+    } else {
+        typeArray.push(char);
+    }
+}
+
+let currentTypeIndex = 0;
+function typeWriterEffect() {
+    if (currentTypeIndex < typeArray.length) {
+        typewriterTextElement.innerHTML += typeArray[currentTypeIndex];
+        currentTypeIndex++;
+
+        // Typing speed: 0 delay for tags, fast random delay for chars to feel organic
+        const delay = typeArray[currentTypeIndex - 1].startsWith('<') ? 0 : 20 + Math.random() * 30;
+        setTimeout(typeWriterEffect, delay);
+    }
+}
+
+// Start the typing effect shortly after the logo fades in
+setTimeout(typeWriterEffect, 600);
