@@ -4,13 +4,10 @@ const ctx = canvas.getContext('2d');
 let width, height;
 let particles = [];
 let lines = [];
-// Global variables for EXAFS data
-let waveletData = null;
-let gridResolutionX = 50;
-let gridResolutionZ = 50;
-
 // Create a grid for the 3D surface
-// numParticles will be dynamically calculated now
+const gridResolutionX = 55; // Much more dense for rounder, smoother curves
+const gridResolutionZ = 55;
+const numParticles = gridResolutionX * gridResolutionZ;
 
 // Mouse interaction for subtle parallax
 const mouse = {
@@ -48,9 +45,7 @@ window.addEventListener('mouseout', () => {
 function resizeCanvas() {
     width = canvas.width = window.innerWidth;
     height = canvas.height = window.innerHeight;
-    if (waveletData) {
-        initParticles(waveletData);
-    }
+    initParticles();
 }
 
 window.addEventListener('resize', resizeCanvas);
@@ -78,30 +73,37 @@ function getMagmaColorRGBA(value, alpha = 1) {
 }
 
 class Particle {
-    constructor(gridX, gridZ, yVal) {
-        // Spread the grid out. Adjust these based on the new dense dataset size to fit screen.
-        // We have ~100x117 points, so smaller spread is needed than the 50x50 grid
-        const spreadX = 12;
-        const spreadZ = 12;
+    constructor(gridX, gridZ) {
+        // Spread the grid out significantly to fill space
+        // With higher density, slightly reduce spread to keep scale manageable but still large
+        const spreadX = 45;
+        const spreadZ = 45;
         this.baseX = (gridX - gridResolutionX / 2) * spreadX;
         this.baseZ = (gridZ - gridResolutionZ / 2) * spreadZ;
 
-        // Use the loaded EXAFS wavelet value for height.
-        // In Canvas, smaller Y is "up". So negate yVal to make peaks point upwards.
-        const amplitude = 400;
-        this.baseY = -yVal * amplitude + 150;
+        // Amplitude and frequency for the center ripples
+        // Increased amplitude and decreased frequency to make ripples physically bigger
+        this.amplitude = 300;
+        this.freq = 0.0075; // Lower frequency means wider rings
 
-        // Current 3D position (starts at base)
+        // Organic noise: a fixed offset for each particle based on its position
+        // Reduced from 1.5 to 0.2 to prevent breaking the cohesive rings while retaining a subtle natural wobble
+        this.noiseOffset = (Math.sin(this.baseX * 0.05) * Math.cos(this.baseZ * 0.05)) * 0.2;
+
+        // Current 3D position 
         this.x3d = this.baseX;
-        this.y3d = this.baseY;
+        this.y3d = 0; // will be calculated in update
         this.z3d = this.baseZ;
 
-        // Visual properties
-        this.size = 1.8; // Increased for dense grid
+        // This will be calculated in update() so it can move with mouse
+        this.distance = 0;
 
-        // Color based on height (Y). yVal is already 0-1 normalized
-        this.colorVal = yVal;
-        this.color = getMagmaColorRGBA(this.colorVal * 0.95);
+        // Visual properties
+        // Randomize the sizes of the points for a more varied, natural feel (0.5 to 6.0 as requested)
+        this.size = 0.5 + Math.random() * 5.5;
+
+        this.colorVal = 0;
+        this.color = getMagmaColorRGBA(0);
 
         // 2D projection coordinates
         this.x2d = 0;
@@ -111,61 +113,78 @@ class Particle {
         // Grid indices for line drawing
         this.i = gridX;
         this.j = gridZ;
-
-        // Save the amplitude for animation
-        this.amplitude = amplitude;
     }
 
     update(time) {
-        // Subtle animation of the surface over time
-        // Just a gentle breathing effect so the static image feels alive
-        const timeOffset = time * 0.0005;
-        const breath = Math.sin(timeOffset + this.baseX * 0.01 + this.baseZ * 0.01) * 15;
-
-        // Animated Y
-        this.y3d = this.baseY + breath;
-
         // Subtle mouse parallax effect
-        // Rotate the entire scene slightly based on mouse position
         const maxRotationX = 0.2; // radians
         const maxRotationY = 0.2;
 
-        // Smoothly interp mouse current to target
         mouse.currentX += (mouse.targetX - mouse.currentX) * 0.05;
         mouse.currentY += (mouse.targetY - mouse.currentY) * 0.05;
 
-        // Look down slightly more to see the structure
+        // Origin of the ripple follows the mouse slightly
+        const rippleCenterX = mouse.currentX * 500;
+        const rippleCenterZ = mouse.currentY * 500;
+
+        // Update the distance to the dynamic center
+        const dx = this.baseX - rippleCenterX;
+        const dz = this.baseZ - rippleCenterZ;
+        this.distance = Math.sqrt(dx * dx + dz * dz);
+
+        // Water ripple animation moving outwards from the center
+        const timeOffset = time * 0.0015;
+
+        // 1. Increasing spacing outwards: 
+        // We use Math.pow to stretch the wave out at the edges, but toned down from 0.85 to 0.93 
+        // so the rings remain distinctly cohesive and readable as a water ripple.
+        const stretchedDistance = Math.pow(this.distance, 0.93) * 1.5;
+
+        // 2. Strong fading of amplitude outwards
+        // We want tight, tall peaks in the center that fade quickly into the background plane
+        // Expand decay radius since the ripple is bigger now
+        const decay = Math.max(0, 1 - Math.pow(this.distance / 1600, 1.5));
+
+        // 3. Mathematical Ripple with Noise
+        // sin(stretchedDistance * freq - time + noise) * amplitude * decay
+        this.y3d = Math.sin(stretchedDistance * this.freq - timeOffset + this.noiseOffset) * this.amplitude * decay;
+
+        // Update color based on ripple height AND decay.
+        // As it decays outwards, it will flatten out and the color will merge with the dark background.
+        // Normalize y3d from [-amplitude, amplitude] to [0.2, 0.9], but scale back to 0.1 at edges
+        let normalizedHeight = (this.y3d + this.amplitude) / (this.amplitude * 2);
+
+        // 4. Fade color outwards to merge with background (which is dark magma / black)
+        // By multiplying by decay, the colorVal drops towards 0 (dark purple/black) at the edges
+        this.colorVal = Math.max(0, Math.min(1, normalizedHeight * (0.3 + 0.7 * decay)));
+
+        // Look down to see the ripple surface
         let rotX = mouse.currentY * maxRotationX;
-        let rotX_base = 0.8;
+        let rotX_base = 1.05; // Look more top down to hide back edges behind depth fog
         rotX += rotX_base;
 
         let rotY = mouse.currentX * maxRotationY;
 
-        // Apply rotation around X axis (tilt up/down)
         let y1 = this.y3d * Math.cos(rotX) - this.baseZ * Math.sin(rotX);
         let z1 = this.y3d * Math.sin(rotX) + this.baseZ * Math.cos(rotX);
 
-        // Apply rotation around Y axis (pan left/right)
-        // Adjust the center point so we spin mostly around the main peak area
         let x2 = this.baseX * Math.cos(rotY) + z1 * Math.sin(rotY);
         let z2 = -this.baseX * Math.sin(rotY) + z1 * Math.cos(rotY);
         let y2 = y1;
 
         // 3D to 2D Projection
-        // Move scene back in Z so it's in front of camera
-        const sceneZOffset = 500;
+        const sceneZOffset = 800; // pushed further back
         const finalZ = z2 + sceneZOffset;
 
-        // Project
         this.scale = camera.fov / (camera.fov + finalZ);
-        // Translate right slightly to center the plot nicely in the viewport
-        this.x2d = x2 * this.scale + width / 2 + 100;
-        // Shifted up to middle of screen
-        this.y2d = y2 * this.scale + height / 2 - 50;
+        this.x2d = x2 * this.scale + width / 2;
+        // Shifted further up to be more centered on screen (was +180)
+        this.y2d = y2 * this.scale + height / 2 + 70;
 
-        // Update color alpha based on depth (fade out in distance)
-        const depthAlpha = Math.max(0.1, Math.min(1, this.scale * 1.5));
-        this.color = getMagmaColorRGBA(this.colorVal * 0.95, depthAlpha);
+        // Update color alpha based on depth AND distance to center (hides rectangular grid bounds)
+        const depthAlpha = Math.max(0, Math.min(1, this.scale * 1.5));
+        const finalAlpha = depthAlpha * decay;
+        this.color = getMagmaColorRGBA(this.colorVal, finalAlpha);
     }
 
     draw() {
@@ -178,23 +197,18 @@ class Particle {
     }
 }
 
-function initParticles(data) {
+function initParticles() {
     particles = [];
-    gridResolutionX = data.rows; // 109
-    gridResolutionZ = data.cols; // 117
 
     // Create a 2D array to easily form grid lines
     let grid = [];
 
-    let index = 0;
     for (let i = 0; i < gridResolutionX; i++) {
         let row = [];
         for (let j = 0; j < gridResolutionZ; j++) {
-            let yVal = data.data[index];
-            let p = new Particle(i, j, yVal);
+            let p = new Particle(i, j);
             particles.push(p);
             row.push(p);
-            index++;
         }
         grid.push(row);
     }
@@ -203,57 +217,54 @@ function initParticles(data) {
     lines = [];
     for (let i = 0; i < gridResolutionX; i++) {
         for (let j = 0; j < gridResolutionZ; j++) {
-            // Because the grid is so dense, only draw lines every Nth point to avoid clutter
-            const sparseFactor = 2; // draw lines between every 2nd point 
+            // Since we reduced the grid size, connect all immediate neighbors
 
             // Connect to right neighbor
-            if (i < gridResolutionX - sparseFactor && j % sparseFactor === 0) {
-                // Sparsely connect for a cleaner look
-                lines.push([grid[i][j], grid[i + sparseFactor][j]]);
+            if (i < gridResolutionX - 1) {
+                lines.push([grid[i][j], grid[i + 1][j]]);
             }
             // Connect to bottom neighbor
-            if (j < gridResolutionZ - sparseFactor && i % sparseFactor === 0) {
-                lines.push([grid[i][j], grid[i][j + sparseFactor]]);
+            if (j < gridResolutionZ - 1) {
+                lines.push([grid[i][j], grid[i][j + 1]]);
             }
         }
     }
 }
 
 function animate(time) {
-    if (!waveletData) {
-        requestAnimationFrame(animate);
-        return;
-    }
-
     ctx.clearRect(0, 0, width, height);
 
     // Update all particles
     particles.forEach(p => p.update(time));
 
     // Draw lines first so they are underneath points
-    ctx.lineWidth = 0.4;
+    ctx.lineWidth = 1.2; // Slightly thicker lines for the scarce grid
     lines.forEach(pair => {
         const p1 = pair[0];
         const p2 = pair[1];
 
         // Only draw if both points are somewhat visible and in front of camera
         if (p1.scale > 0 && p2.scale > 0) {
-            // Distance check to prevent drawing crazy long lines across the screen if projection goes weird
+            // Distance check 
             const dx = p1.x2d - p2.x2d;
             const dy = p1.y2d - p2.y2d;
             const distSq = dx * dx + dy * dy;
 
-            if (distSq < 15000) {
+            if (distSq < 45000) {
                 ctx.beginPath();
                 ctx.moveTo(p1.x2d, p1.y2d);
-                ctx.lineTo(p2.x2d, p2.y2d);
 
-                // Use a blended highly transparent magma color for the line
-                // Base it on the average height of the two points
+                // Create a beautiful drape curve
+                const ctrlX = (p1.x2d + p2.x2d) / 2;
+                const ctrlY = (p1.y2d + p2.y2d) / 2 + 35 * Math.min(p1.scale, p2.scale);
+
+                ctx.quadraticCurveTo(ctrlX, ctrlY, p2.x2d, p2.y2d);
+
                 const avgColorVal = (p1.colorVal + p2.colorVal) / 2;
 
-                // Draw lines brighter if they correspond to peaks (high value)
-                const alpha = Math.max(0.1, avgColorVal * 0.4 * p1.scale);
+                // Fade out edges smoothly
+                const lineDecay = Math.max(0, 1 - (Math.max(p1.distance, p2.distance) / 1200));
+                const alpha = Math.max(0, avgColorVal * 0.9 * Math.min(p1.scale, p2.scale) * lineDecay);
                 ctx.strokeStyle = getMagmaColorRGBA(avgColorVal * 0.9, alpha);
                 ctx.stroke();
             }
@@ -266,15 +277,7 @@ function animate(time) {
     requestAnimationFrame(animate);
 }
 
-// Fetch the newly generated EXAFS wavelet json
-fetch('wavelet_data.json')
-    .then(response => response.json())
-    .then(data => {
-        waveletData = data;
-        resizeCanvas();
-    })
-    .catch(err => console.error("Could not load wavelet_data.json:", err));
-
+resizeCanvas();
 requestAnimationFrame(animate);
 
 // --- Elegant Typewriter Effect ---
