@@ -455,3 +455,211 @@ h1.typing-container {
     /* Fill the entire section, cropping if necessary */
     display: block;
 }
+
+/* --- Modern Footer --- */
+.site-footer {
+    position: relative;
+    background: rgba(255, 255, 255, 1);
+    color: #1f1f1f;
+    padding: 60px 40px 40px;
+    font-family: 'Outfit', sans-serif;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    /* Subtle dark border top */
+    z-index: 100;
+}
+
+.footer-bottom-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 60px;
+}
+
+.footer-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.footer-right {
+    flex: 0 0 350px;
+    /* Fixed width for the chatbox */
+}
+
+/* --- Left Side Content --- */
+.footer-socials {
+    display: flex;
+    gap: 24px;
+}
+
+.footer-socials a {
+    transition: color 0.3s ease, transform 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Darker Magma Colors for Logos */
+.footer-socials a.social-github {
+    color: #3b0f70;
+    /* Darker Magma Purple */
+}
+
+.footer-socials a.social-twitter {
+    color: #8c2981;
+    /* Dark Magma Magenta */
+}
+
+.footer-socials a.social-discord {
+    color: #de4968;
+    /* Magma deep red/pink */
+}
+
+.footer-socials a:hover {
+    transform: translateY(-2px);
+    filter: brightness(1.2);
+    /* Slight brightening on hover */
+}
+
+.footer-links-row {
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+}
+
+.footer-links-row a {
+    color: #5f6368;
+    /* Google grey */
+    text-decoration: none;
+    font-size: 0.95rem;
+    transition: color 0.3s ease;
+}
+
+.footer-links-row a:hover {
+    color: #1f1f1f;
+}
+
+.footer-ldrd-support {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #5f6368;
+    /* Google grey */
+    max-width: 500px;
+}
+
+.footer-copyright {
+    font-size: 0.85rem;
+    color: #9aa0a6;
+    /* Lighter grey */
+}
+
+/* --- Chatbox --- */
+.chatbox-container {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    height: 100%;
+    box-sizing: border-box;
+    font-family: 'Google Sans', 'Outfit', sans-serif;
+}
+
+.chatbox-title {
+    color: #1f1f1f;
+    margin: 0 0 20px 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+}
+
+.chatbox-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.chatbox-input,
+.chatbox-textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    background-color: #f9f9f9;
+    color: #333;
+    font-size: 0.95rem;
+    font-family: inherit;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+    box-sizing: border-box;
+}
+
+.chatbox-input:focus,
+.chatbox-textarea:focus {
+    outline: none;
+    border-color: #b73779;
+    /* Magma color focus */
+    background-color: #ffffff;
+}
+
+.chatbox-textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.chatbox-submit {
+    background: linear-gradient(135deg, rgba(140, 41, 129, 0.9) 0%, rgba(222, 73, 104, 0.9) 100%);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    font-family: inherit;
+}
+
+.chatbox-submit:hover {
+    opacity: 0.9;
+}
+
+.chatbox-submit:active {
+    transform: scale(0.98);
+}
+
+/* Footer Responsiveness */
+@media (max-width: 900px) {
+    .footer-bottom-container {
+        flex-direction: column-reverse;
+        align-items: stretch;
+        gap: 40px;
+    }
+
+    .footer-right {
+        flex: none;
+        width: 100%;
+    }
+
+    .footer-left {
+        align-items: center;
+        text-align: center;
+    }
+
+    .footer-links-row {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 600px) {
+    .site-footer {
+        padding: 40px 20px;
+    }
+
+    .footer-links-row {
+        gap: 20px;
+        flex-direction: column;
+        align-items: center;
+    }
+}
