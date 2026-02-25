@@ -178,8 +178,8 @@ class Particle {
 
         this.scale = camera.fov / (camera.fov + finalZ);
         this.x2d = x2 * this.scale + width / 2;
-        // Shifted further up to be more centered on screen (was +180)
-        this.y2d = y2 * this.scale + height / 2 + 70;
+        // Shifted further up to match the newly raised `.content` hero text
+        this.y2d = y2 * this.scale + height / 2 + 10;
 
         // Update color alpha based on depth AND distance to center (hides rectangular grid bounds)
         const depthAlpha = Math.max(0, Math.min(1, this.scale * 1.5));

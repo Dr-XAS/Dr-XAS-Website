@@ -174,7 +174,8 @@ html {
 
 .content {
     position: absolute;
-    top: 50%;
+    top: calc(42% + 50px);
+    /* Raised 150px from +200px per user request */
     left: 50%;
     transform: translate(-50%, -50%);
     width: 90%;
@@ -247,6 +248,66 @@ h1.typing-container {
     margin-left: 4px;
     vertical-align: text-bottom;
     animation: blink 1s step-end infinite;
+}
+
+/* --- Hero Action Buttons --- */
+.hero-buttons {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+    /* Gives some breathing room after the large hero text */
+    justify-content: center;
+    opacity: 0;
+    pointer-events: auto;
+    /* Re-enable clicks since parent .content has none */
+    /* Delay the buttons to fade in strictly AFTER the typing animation completes (~3s) */
+    animation: fadeUp 1s cubic-bezier(0.16, 1, 0.3, 1) forwards 3s;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 28px;
+    width: 180px;
+    /* Fixed width so both buttons match perfectly */
+    box-sizing: border-box;
+    border-radius: 40px;
+    /* Fully rounded pill shape */
+    font-size: 1.15rem;
+    font-family: 'Google Sans', 'Outfit', sans-serif;
+    font-weight: 500;
+    text-decoration: none;
+    transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.btn:active {
+    transform: scale(0.97);
+}
+
+.btn-primary {
+    /* Dark Magma gradient (purple to red, no orange) with slight transparency */
+    background: linear-gradient(135deg, rgba(31, 0, 92, 0.85) 0%, rgba(183, 55, 121, 0.85) 100%);
+    color: #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+}
+
+.btn-primary:hover {
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+    opacity: 0.9;
+}
+
+.btn-secondary {
+    background-color: rgba(245, 245, 247, 0.7);
+    color: #111111;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.btn-secondary:hover {
+    background-color: #ebebed;
 }
 
 /* For formatting the inner HTML of the typewriter */
