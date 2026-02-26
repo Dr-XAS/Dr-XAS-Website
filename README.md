@@ -2,6 +2,8 @@
 
 Welcome to the repository for the **Dr. XAS Website**. This project serves as the landing page and portfolio interface for the Dr. XAS ecosystem, an AI companion for X-ray absorption spectroscopy.
 
+**🌍 Live Website:** [dr-xas.org](https://dr-xas.org)
+
 ## Overview
 
 The website features an interactive landing page (currently highlighted by the `magma-particles-demo`) that showcases:
