@@ -5,8 +5,10 @@ let width, height;
 let particles = [];
 let lines = [];
 // Create a grid for the 3D surface
-const gridResolutionX = 55; // Much more dense for rounder, smoother curves
-const gridResolutionZ = 55;
+// Adjust density based on screen width
+const isMobile = window.innerWidth <= 768;
+const gridResolutionX = isMobile ? 35 : 55; // Much more dense for rounder, smoother curves on desktop
+const gridResolutionZ = isMobile ? 35 : 55;
 const numParticles = gridResolutionX * gridResolutionZ;
 
 // Mouse interaction for subtle parallax
@@ -279,6 +281,17 @@ function animate(time) {
 
 resizeCanvas();
 requestAnimationFrame(animate);
+
+// --- Mobile Navigation Toggle ---
+const mobileBtn = document.querySelector('.mobile-menu-btn');
+const navLinks = document.querySelector('.nav-links');
+
+if (mobileBtn && navLinks) {
+    mobileBtn.addEventListener('click', () => {
+        mobileBtn.classList.toggle('open');
+        navLinks.classList.toggle('active');
+    });
+}
 
 // --- Elegant Typewriter Effect ---
 const typewriterTextElement = document.getElementById('typewriter-text');
