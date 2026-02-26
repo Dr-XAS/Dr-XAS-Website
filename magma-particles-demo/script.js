@@ -28,7 +28,7 @@ const camera = {
 window.addEventListener('mousemove', (e) => {
     // Normalize mouse coords to -1 to 1 based on center of screen
     mouse.targetX = (e.clientX - width / 2) / (width / 2);
-    mouse.targetY = (e.clientY - height / 2) / (height / 2);
+    mouse.targetY = -(e.clientY - height / 2) / (height / 2);
 
     // For original repulsion logic (though we'll use it less now)
     mouse.x = e.clientX;
