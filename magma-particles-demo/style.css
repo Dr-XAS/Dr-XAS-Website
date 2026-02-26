@@ -59,6 +59,11 @@ html {
     width: auto;
 }
 
+.mobile-menu-btn {
+    display: none;
+    /* Hidden on desktop */
+}
+
 .nav-links {
     list-style: none;
     display: flex;
@@ -472,28 +477,30 @@ h1.typing-container {
     max-width: 1200px;
     margin: 0 auto;
     display: flex;
-    justify-content: space-between;
-    align-items: stretch;
-    gap: 60px;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    gap: 30px;
 }
 
 .footer-left {
-    flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
     gap: 24px;
 }
 
 .footer-right {
-    flex: 0 0 350px;
-    /* Fixed width for the chatbox */
+    display: none;
 }
 
 /* --- Left Side Content --- */
 .footer-socials {
     display: flex;
     gap: 24px;
+    justify-content: center;
 }
 
 .footer-socials a {
@@ -505,18 +512,19 @@ h1.typing-container {
 
 /* Darker Magma Colors for Logos */
 .footer-socials a.social-github {
-    color: #3b0f70;
-    /* Darker Magma Purple */
+    color: #641a80;
 }
 
-.footer-socials a.social-twitter {
+.footer-socials a.social-x {
     color: #8c2981;
-    /* Dark Magma Magenta */
 }
 
 .footer-socials a.social-discord {
+    color: #b73779;
+}
+
+.footer-socials a.social-email {
     color: #de4968;
-    /* Magma deep red/pink */
 }
 
 .footer-socials a:hover {
@@ -529,6 +537,7 @@ h1.typing-container {
     display: flex;
     gap: 32px;
     flex-wrap: wrap;
+    justify-content: center;
 }
 
 .footer-links-row a {
@@ -548,85 +557,13 @@ h1.typing-container {
     line-height: 1.5;
     color: #5f6368;
     /* Google grey */
-    max-width: 500px;
+    max-width: 600px;
 }
 
 .footer-copyright {
     font-size: 0.85rem;
     color: #9aa0a6;
     /* Lighter grey */
-}
-
-/* --- Chatbox --- */
-.chatbox-container {
-    background-color: #ffffff;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-    height: 100%;
-    box-sizing: border-box;
-    font-family: 'Google Sans', 'Outfit', sans-serif;
-}
-
-.chatbox-title {
-    color: #1f1f1f;
-    margin: 0 0 20px 0;
-    font-size: 1.15rem;
-    font-weight: 600;
-}
-
-.chatbox-form {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.chatbox-input,
-.chatbox-textarea {
-    width: 100%;
-    padding: 12px;
-    border: 1px solid #e0e0e0;
-    border-radius: 6px;
-    background-color: #f9f9f9;
-    color: #333;
-    font-size: 0.95rem;
-    font-family: inherit;
-    transition: border-color 0.2s ease, background-color 0.2s ease;
-    box-sizing: border-box;
-}
-
-.chatbox-input:focus,
-.chatbox-textarea:focus {
-    outline: none;
-    border-color: #b73779;
-    /* Magma color focus */
-    background-color: #ffffff;
-}
-
-.chatbox-textarea {
-    resize: vertical;
-    min-height: 80px;
-}
-
-.chatbox-submit {
-    background: linear-gradient(135deg, rgba(140, 41, 129, 0.9) 0%, rgba(222, 73, 104, 0.9) 100%);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 12px;
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-    font-family: inherit;
-}
-
-.chatbox-submit:hover {
-    opacity: 0.9;
-}
-
-.chatbox-submit:active {
-    transform: scale(0.98);
 }
 
 /* Footer Responsiveness */
@@ -661,5 +598,230 @@ h1.typing-container {
         gap: 20px;
         flex-direction: column;
         align-items: center;
+    }
+}
+
+/* --- Mobile View Adjustments --- */
+@media (max-width: 900px) {
+
+    /* Navigation Bar */
+    .navbar {
+        padding: 0 20px;
+        height: 60px;
+    }
+
+    .nav-brand {
+        margin-right: auto;
+        /* Push links to the right if they exist */
+    }
+
+    .nav-logo {
+        height: 24px;
+        /* Smaller logo for mobile */
+    }
+
+    /* Hide standard nav links and implement a hamburger or simplify */
+    .nav-links {
+        opacity: 0;
+        visibility: hidden;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background: rgba(255, 255, 255, 0.98);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        padding: 20px 0;
+        backdrop-filter: blur(10px);
+        gap: 0;
+        border-bottom: 1px solid #eee;
+        z-index: 40;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+    }
+
+    /* Target state when hamburger is open */
+    .nav-links.active {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+
+    .nav-links li a {
+        font-size: 1.2rem;
+        padding: 16px 40px;
+        width: 100%;
+        display: block;
+        text-align: center;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.02);
+    }
+
+    /* Hamburger icon container */
+    .mobile-menu-btn {
+        display: flex !important;
+        flex-direction: column;
+        justify-content: space-around;
+        width: 30px;
+        height: 24px;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        z-index: 60;
+    }
+
+    .mobile-menu-btn span {
+        width: 30px;
+        height: 3px;
+        background: #1f1f1f;
+        border-radius: 10px;
+        transition: all 0.3s linear;
+        position: relative;
+        transform-origin: 1px;
+    }
+
+    /* Hamburger Animation States */
+    .mobile-menu-btn.open span:nth-child(1) {
+        transform: rotate(45deg);
+    }
+
+    .mobile-menu-btn.open span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .mobile-menu-btn.open span:nth-child(3) {
+        transform: rotate(-45deg);
+    }
+
+    /* Dropdown and Mega Menu Mobile Adjustments */
+    .dropdown {
+        width: 100%;
+    }
+
+    .dropdown-content {
+        position: static;
+        box-shadow: none;
+        border: none;
+        padding: 0;
+        background: transparent;
+    }
+
+    .mega-menu-inner {
+        flex-direction: column;
+        padding: 10px 20px;
+        gap: 12px;
+    }
+
+    .mega-link {
+        padding: 12px 16px;
+    }
+
+    .mega-title {
+        font-size: 1.05rem;
+    }
+
+    .mega-desc {
+        font-size: 0.85rem;
+    }
+
+    /* Hero Section */
+    .content {
+        top: 50%;
+        /* Center purely vertically */
+        width: 95%;
+    }
+
+    .logo {
+        width: 150px;
+        /* Scale logo down further */
+    }
+
+    h1.typing-container {
+        font-size: 1.8rem !important;
+        /* Increased size, let it break into lines naturally */
+        min-width: 0 !important;
+        max-width: 100vw !important;
+        /* Remove min-width restriction */
+        width: 100%;
+        min-height: auto;
+        line-height: 1.35;
+        padding: 0 20px;
+        /* Prevent edge-to-edge kissing */
+        box-sizing: border-box;
+        white-space: normal !important;
+        /* CRITICAL: force wrapping which the typewriter might fight */
+    }
+
+    .magma-text {
+        font-size: 1.8rem !important;
+        /* Force inline magma-text span to match parent size */
+        white-space: normal !important;
+        /* Ensure the inline span doesn't prevent wrapping */
+        word-wrap: break-word;
+        /* Allow long words to break if necessary */
+    }
+
+    /* Hero Action Buttons */
+    .hero-buttons {
+        flex-direction: column;
+        /* Stack buttons vertically */
+        width: 100%;
+        max-width: 280px;
+        /* Limit width */
+        gap: 12px;
+        margin-top: 20px;
+    }
+
+    .btn {
+        width: 100%;
+        /* Full width buttons internally */
+        padding: 10px 16px;
+        /* Thinner buttons for mobile */
+        font-size: 1rem;
+        /* Slightly smaller text for mobile */
+    }
+
+    /* Dot Navigation */
+    .dot-nav {
+        /* Move to bottom center */
+        left: 50%;
+        top: auto;
+        bottom: 20px;
+        transform: translateX(-50%);
+        flex-direction: row;
+        /* Horizontal dots */
+        gap: 16px;
+    }
+
+    .dot-item {
+        flex-direction: column;
+        /* Align dot and label vertically */
+        gap: 8px;
+    }
+
+    .dot-label {
+        font-size: 0.8rem;
+        transform: translateY(10px);
+        /* Hide label downwards initially instead of left */
+    }
+
+    .dot-item.active .dot-label,
+    .dot-item:hover .dot-label {
+        transform: translateY(0);
+    }
+
+    /* Demo Video Section */
+    .demo-section {
+        height: auto;
+        /* Let it size to the video */
+        aspect-ratio: 16 / 9;
+        /* Force a reasonable aspect ratio for standard videos */
+        min-height: 40vh;
+        /* Ensure it always has some height */
+    }
+
+    .demo-video {
+        object-fit: contain;
+        /* Fit the entire video inside the box without croppping */
     }
 }
