@@ -475,6 +475,32 @@ html {
     pointer-events: auto;
 }
 
+.dot-nav.demo-video.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* --- Demo Video Overlay --- */
+.video-overlay-content {
+    position: absolute;
+    bottom: 60px;
+    /* Distance from the bottom of the video section */
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.5s ease 0.3s;
+    /* Fade in shortly after the section is reached */
+    pointer-events: none;
+}
+
+/* Show the overlay when the video is active */
+.demo-section .demo-video.active~.video-overlay-content {
+    opacity: 1;
+    pointer-events: auto;
+    /* Let people click the button */
+}
+
 .dot-item {
     display: flex;
     align-items: center;
