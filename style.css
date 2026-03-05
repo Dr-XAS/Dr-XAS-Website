@@ -475,10 +475,7 @@ html {
     pointer-events: auto;
 }
 
-.dot-nav.demo-video.active {
-    opacity: 1;
-    pointer-events: auto;
-}
+
 
 /* --- Demo Video Overlay --- */
 .video-overlay-content {
@@ -590,7 +587,7 @@ html {
 }
 
 .video-wrapper {
-    position: absolute;
+    position: relative;
     top: 0;
     left: 0;
     width: 100%;
@@ -960,14 +957,19 @@ html {
     .demo-section {
         height: auto;
         /* Let it size to the video */
-        aspect-ratio: 16 / 9;
-        /* Force a reasonable aspect ratio for standard videos */
-        min-height: 40vh;
+        min-height: 0;
         /* Ensure it always has some height */
     }
 
     .demo-video {
+        height: auto;
+        max-height: 80vh;
+        /* Prevent it taking the whole screen height in mobile portrait */
         object-fit: contain;
         /* Fit the entire video inside the box without croppping */
+    }
+
+    .video-overlay-content {
+        bottom: 20px;
     }
 }
