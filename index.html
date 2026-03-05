@@ -13,7 +13,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Roboto:wght@400;500;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=22">
+    <link rel="stylesheet" href="style.css?v=26">
 </head>
 
 <body>
@@ -41,7 +41,8 @@
                     <div class="mega-menu-inner layout-divider">
                         <!-- Left side -->
                         <div class="mega-left-col">
-                            <a href="#demo-drxas" class="mega-link mega-compact">
+                            <a href="#demo-drxas" class="mega-link mega-compact"
+                                onclick="document.querySelector('.nav-links').classList.remove('active'); document.querySelector('.mobile-menu-btn').classList.remove('open');">
                                 <div class="mega-content-row">
                                     <span class="mega-title magma-color-3">Dr. XAS</span>
                                     <span class="mega-desc">The AI companion for X-ray absorption spectroscopy.</span>
@@ -51,14 +52,16 @@
 
                         <!-- Right side -->
                         <div class="mega-col divider-left">
-                            <a href="https://easyxascalc.dr-xas.org/" class="mega-link mega-compact" target="_blank" rel="noopener noreferrer">
+                            <a href="#demo-xasprep" class="mega-link mega-compact"
+                                onclick="document.querySelector('.nav-links').classList.remove('active'); document.querySelector('.mobile-menu-btn').classList.remove('open');">
                                 <div class="mega-content-row">
                                     <span class="mega-title magma-color-2">XASprep</span>
                                     <span class="mega-desc">Advanced calculation and spectrum analysis.</span>
                                 </div>
                             </a>
                             <div class="divider-horizontal"></div>
-                            <a href="#" class="mega-link mega-compact">
+                            <a href="#demo-xasbench" class="mega-link mega-compact"
+                                onclick="document.querySelector('.nav-links').classList.remove('active'); document.querySelector('.mobile-menu-btn').classList.remove('open');">
                                 <div class="mega-content-row">
                                     <span class="mega-title magma-color-1">XASbench</span>
                                     <span class="mega-desc">Standardized datasets and benchmarking tools.</span>
@@ -99,25 +102,42 @@
     <!-- Dr. XAS Demo Video Section -->
     <section class="demo-section" id="demo-drxas">
         <div class="video-wrapper">
-            <video src="assets/demo/dr_xas.mov" autoplay loop muted playsinline class="demo-video"></video>
+            <video id="video-drxas" src="assets/demo/dr_xas.mov" autoplay loop muted playsinline
+                class="demo-video active"></video>
         </div>
-
-        <!-- Left Side Dot Navigation -->
-        <nav class="dot-nav">
-            <div class="dot-item active group-3">
-                <span class="dot-indicator"></span>
-                <span class="dot-label">Dr. XAS</span>
-            </div>
-            <div class="dot-item group-2">
-                <span class="dot-indicator"></span>
-                <span class="dot-label">XASprep</span>
-            </div>
-            <div class="dot-item group-1">
-                <span class="dot-indicator"></span>
-                <span class="dot-label">XASbench</span>
-            </div>
-        </nav>
     </section>
+
+    <!-- XASprep Demo Video Section -->
+    <section class="demo-section" id="demo-xasprep">
+        <div class="video-wrapper">
+            <video id="video-xasprep" src="assets/demo/XASPrep_2x.mov" autoplay loop muted playsinline
+                class="demo-video active"></video>
+        </div>
+    </section>
+
+    <!-- XASbench Demo Video Section -->
+    <section class="demo-section" id="demo-xasbench">
+        <div class="video-wrapper">
+            <video id="video-xasbench" src="assets/demo/XASBench_2x.mov" autoplay loop muted playsinline
+                class="demo-video active"></video>
+        </div>
+    </section>
+
+    <!-- Left Side Dot Navigation (Fixed Position on Scrolling) -->
+    <nav class="dot-nav">
+        <a href="#demo-drxas" class="dot-item active group-3" data-target="demo-drxas">
+            <span class="dot-indicator"></span>
+            <span class="dot-label">Dr. XAS</span>
+        </a>
+        <a href="#demo-xasprep" class="dot-item group-2" data-target="demo-xasprep">
+            <span class="dot-indicator"></span>
+            <span class="dot-label">XASprep</span>
+        </a>
+        <a href="#demo-xasbench" class="dot-item group-1" data-target="demo-xasbench">
+            <span class="dot-indicator"></span>
+            <span class="dot-label">XASbench</span>
+        </a>
+    </nav>
 
     <!-- Modern Footer -->
     <footer class="site-footer">
@@ -169,7 +189,7 @@
         </div>
     </footer>
 
-    <script src="script.js?v=17"></script>
+    <script src="script.js?v=21"></script>
 </body>
 
 </html>

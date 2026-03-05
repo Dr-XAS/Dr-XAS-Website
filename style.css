@@ -439,6 +439,10 @@ h1.typing-container {
     }
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 /* --- Added Video Section --- */
 .demo-section {
     position: relative;
@@ -452,7 +456,7 @@ h1.typing-container {
 
 /* --- Left Side Dot Navigation --- */
 .dot-nav {
-    position: absolute;
+    position: fixed;
     left: 40px;
     top: 50%;
     transform: translateY(-50%);
@@ -461,6 +465,14 @@ h1.typing-container {
     gap: 32px;
     z-index: 30;
     /* Always above video */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+
+.dot-nav.is-visible {
+    opacity: 1;
+    pointer-events: auto;
 }
 
 .dot-item {
@@ -471,6 +483,8 @@ h1.typing-container {
     cursor: pointer;
     opacity: 0.6;
     transition: opacity 0.3s ease, transform 0.3s ease;
+    text-decoration: none;
+    /* Add this because they are now anchor tags */
 }
 
 .dot-item:hover {
@@ -504,7 +518,7 @@ h1.typing-container {
     /* Match nav weight */
     opacity: 0;
     transform: translateX(-10px);
-    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
     /* Shadow for readability on video */
 }
@@ -522,14 +536,27 @@ h1.typing-container {
     box-shadow: 0 0 15px rgba(247, 112, 92, 0.6);
 }
 
+.dot-item.active.group-1 .dot-label {
+    color: #f7705c;
+}
+
 .dot-item.active.group-2 .dot-indicator {
     border-color: #b73779;
     box-shadow: 0 0 15px rgba(183, 55, 121, 0.6);
 }
 
+.dot-item.active.group-2 .dot-label {
+    color: #b73779;
+}
+
 .dot-item.active.group-3 .dot-indicator {
     border-color: #3b0f70;
     box-shadow: 0 0 15px rgba(59, 15, 112, 0.6);
+}
+
+.dot-item.active.group-3 .dot-label {
+    color: #9d5de4;
+    /* Using a lighter variation of 3b0f70 for text readability on dark bg */
 }
 
 .dot-item:hover:not(.active) .dot-indicator {

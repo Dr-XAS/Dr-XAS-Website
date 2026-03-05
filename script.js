@@ -333,3 +333,60 @@ function typeWriterEffect() {
 
 // Start the typing effect shortly after the logo fades in
 setTimeout(typeWriterEffect, 600);
+
+// --- Scroll Spy & Video Autoplay ---
+const dotNav = document.querySelector('.dot-nav');
+const dotItems = document.querySelectorAll('.dot-item');
+const demoSections = document.querySelectorAll('.demo-section');
+
+if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
+    const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.5 // Trigger when 50% of the section is visible
+    };
+
+    let visibleSectionsCount = 0;
+
+    const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            const id = entry.target.getAttribute('id');
+            const correspondingDot = document.querySelector(`.dot-item[data-target="${id}"]`);
+            const video = entry.target.querySelector('video');
+
+            if (entry.isIntersecting) {
+                visibleSectionsCount++;
+
+                // Update dots
+                dotItems.forEach(dot => dot.classList.remove('active'));
+                if (correspondingDot) {
+                    correspondingDot.classList.add('active');
+                }
+
+                // Play video in view
+                if (video) {
+                    video.play().catch(e => console.log('Auto-play prevented', e));
+                }
+            } else {
+                if (visibleSectionsCount > 0) visibleSectionsCount--;
+
+                // Pause video out of view to save resources
+                if (video) {
+                    video.pause();
+                }
+            }
+        });
+
+        // Toggle overall dot navigation visibility
+        if (visibleSectionsCount > 0) {
+            dotNav.classList.add('is-visible');
+        } else {
+            dotNav.classList.remove('is-visible');
+        }
+
+    }, observerOptions);
+
+    demoSections.forEach(section => {
+        sectionObserver.observe(section);
+    });
+}
