@@ -956,17 +956,14 @@ html {
     /* Demo Video Section */
     .demo-section {
         height: auto;
-        /* Let it size to the video */
-        min-height: 0;
-        /* Ensure it always has some height */
+        aspect-ratio: 16 / 9;
+        min-height: 40vh;
     }
 
     .demo-video {
-        height: auto;
-        max-height: 80vh;
-        /* Prevent it taking the whole screen height in mobile portrait */
-        object-fit: contain;
-        /* Fit the entire video inside the box without croppping */
+        height: 100%;
+        max-height: none;
+        object-fit: cover;
     }
 
     .video-overlay-content {
