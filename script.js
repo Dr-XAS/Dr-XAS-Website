@@ -338,6 +338,51 @@ setTimeout(typeWriterEffect, 600);
 const dotNav = document.querySelector('.dot-nav');
 const dotItems = document.querySelectorAll('.dot-item');
 const demoSections = document.querySelectorAll('.demo-section');
+const demoVideos = document.querySelectorAll('.demo-video');
+
+function attemptVideoPlayback(video) {
+    if (!video) return;
+
+    video.defaultMuted = true;
+    video.muted = true;
+    video.playsInline = true;
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+
+    const playPromise = video.play();
+    if (playPromise && typeof playPromise.catch === 'function') {
+        playPromise
+            .then(() => {
+                video.controls = false;
+            })
+            .catch((error) => {
+                console.log('Auto-play prevented', error);
+                video.controls = true;
+            });
+    }
+}
+
+function replayVisibleVideos() {
+    demoSections.forEach(section => {
+        const rect = section.getBoundingClientRect();
+        const isVisible = rect.top < window.innerHeight * 0.75 && rect.bottom > window.innerHeight * 0.25;
+
+        if (isVisible) {
+            attemptVideoPlayback(section.querySelector('video'));
+        }
+    });
+}
+
+demoVideos.forEach(video => {
+    video.defaultMuted = true;
+    video.muted = true;
+    video.playsInline = true;
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+});
+
+window.addEventListener('touchstart', replayVisibleVideos, { passive: true });
+window.addEventListener('pointerdown', replayVisibleVideos, { passive: true });
 
 if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
     const observerOptions = {
@@ -365,7 +410,7 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
 
                 // Play video in view
                 if (video) {
-                    video.play().catch(e => console.log('Auto-play prevented', e));
+                    attemptVideoPlayback(video);
                 }
             } else {
                 if (visibleSectionsCount > 0) visibleSectionsCount--;

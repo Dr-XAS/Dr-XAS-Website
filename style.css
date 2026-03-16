@@ -602,6 +602,7 @@ html {
     object-fit: cover;
     /* Fill the entire section, cropping if necessary */
     display: block;
+    background-color: #000000;
 }
 
 /* --- Modern Footer --- */

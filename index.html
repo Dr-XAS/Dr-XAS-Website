@@ -13,7 +13,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Roboto:wght@400;500;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=36">
+    <link rel="stylesheet" href="style.css?v=37">
 </head>
 
 <body>
@@ -110,16 +110,21 @@
     <!-- Dr. XAS Demo Video Section -->
     <section class="demo-section" id="demo-drxas">
         <div class="video-wrapper">
-            <video id="video-drxas" src="assets/demo/dr_xas.mov#t=0.001" preload="metadata" loop muted playsinline
-                class="demo-video active"></video>
+            <video id="video-drxas" preload="metadata" autoplay loop muted playsinline webkit-playsinline
+                poster="assets/demo/dr_xas-poster.jpg?v=2" class="demo-video active" aria-label="Dr. XAS demo video">
+                <source src="assets/demo/dr_xas.mp4?v=2" type="video/mp4">
+            </video>
         </div>
     </section>
 
     <!-- XASprep Demo Video Section -->
     <section class="demo-section" id="demo-xasprep">
         <div class="video-wrapper">
-            <video id="video-xasprep" src="assets/demo/XASPrep_2x.mov#t=0.001" preload="metadata" loop muted playsinline
-                class="demo-video active"></video>
+            <video id="video-xasprep" preload="metadata" autoplay loop muted playsinline webkit-playsinline
+                poster="assets/demo/XASPrep_2x-poster.jpg?v=2" class="demo-video active"
+                aria-label="XASprep demo video">
+                <source src="assets/demo/XASPrep_2x.mp4?v=2" type="video/mp4">
+            </video>
             <div class="video-overlay-content">
                 <a href="https://easyxascalc.dr-xas.org/" class="btn btn-primary" target="_blank"
                     rel="noopener noreferrer">Access the tool</a>
@@ -130,8 +135,11 @@
     <!-- XASbench Demo Video Section -->
     <section class="demo-section" id="demo-xasbench">
         <div class="video-wrapper">
-            <video id="video-xasbench" src="assets/demo/XASBench_2x.mov#t=0.001" preload="metadata" loop muted
-                playsinline class="demo-video active"></video>
+            <video id="video-xasbench" preload="metadata" autoplay loop muted playsinline webkit-playsinline
+                poster="assets/demo/XASBench_2x-poster.jpg?v=2" class="demo-video active"
+                aria-label="XASbench demo video">
+                <source src="assets/demo/XASBench_2x.mp4?v=2" type="video/mp4">
+            </video>
         </div>
     </section>
 
@@ -201,7 +209,7 @@
         </div>
     </footer>
 
-    <script src="script.js?v=21"></script>
+    <script src="script.js?v=22"></script>
 </body>
 
 </html>
