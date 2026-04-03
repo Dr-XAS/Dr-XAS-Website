@@ -339,6 +339,38 @@ const dotNav = document.querySelector('.dot-nav');
 const dotItems = document.querySelectorAll('.dot-item');
 const demoSections = document.querySelectorAll('.demo-section');
 const demoVideos = document.querySelectorAll('.demo-video');
+const mobileVideoQuery = window.matchMedia('(max-width: 900px)');
+
+function syncVideoSources() {
+    demoVideos.forEach(video => {
+        const source = video.querySelector('source');
+        if (!source) return;
+
+        if (!video.dataset.desktopSrc) {
+            video.dataset.desktopSrc = source.getAttribute('src') || '';
+        }
+
+        if (!video.dataset.desktopPoster) {
+            video.dataset.desktopPoster = video.getAttribute('poster') || '';
+        }
+
+        const targetSrc = mobileVideoQuery.matches && video.dataset.mobileSrc
+            ? video.dataset.mobileSrc
+            : video.dataset.desktopSrc;
+        const targetPoster = mobileVideoQuery.matches && video.dataset.mobilePoster
+            ? video.dataset.mobilePoster
+            : video.dataset.desktopPoster;
+
+        if (targetPoster) {
+            video.setAttribute('poster', targetPoster);
+        }
+
+        if (targetSrc && source.getAttribute('src') !== targetSrc) {
+            source.setAttribute('src', targetSrc);
+            video.load();
+        }
+    });
+}
 
 function attemptVideoPlayback(video) {
     if (!video) return;
@@ -373,6 +405,7 @@ function replayVisibleVideos() {
     });
 }
 
+syncVideoSources();
 demoVideos.forEach(video => {
     video.defaultMuted = true;
     video.muted = true;
@@ -383,6 +416,16 @@ demoVideos.forEach(video => {
 
 window.addEventListener('touchstart', replayVisibleVideos, { passive: true });
 window.addEventListener('pointerdown', replayVisibleVideos, { passive: true });
+const handleVideoViewportChange = () => {
+    syncVideoSources();
+    replayVisibleVideos();
+};
+
+if (typeof mobileVideoQuery.addEventListener === 'function') {
+    mobileVideoQuery.addEventListener('change', handleVideoViewportChange);
+} else if (typeof mobileVideoQuery.addListener === 'function') {
+    mobileVideoQuery.addListener(handleVideoViewportChange);
+}
 
 if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
     const observerOptions = {
