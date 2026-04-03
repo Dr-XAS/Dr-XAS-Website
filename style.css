@@ -957,8 +957,26 @@ html {
     /* Demo Video Section */
     .demo-section {
         height: auto;
+        min-height: 0;
+        aspect-ratio: auto;
+        background-color: transparent;
+    }
+
+    .video-wrapper {
+        height: auto;
         aspect-ratio: 16 / 9;
-        min-height: 40vh;
+    }
+
+    #demo-drxas .video-wrapper {
+        aspect-ratio: 3066 / 1654;
+    }
+
+    #demo-xasprep .video-wrapper {
+        aspect-ratio: 3024 / 1896;
+    }
+
+    #demo-xasbench .video-wrapper {
+        aspect-ratio: 3024 / 1964;
     }
 
     .demo-video {
