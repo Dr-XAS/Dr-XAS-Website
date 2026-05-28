@@ -100,7 +100,8 @@ html {
     transition: transform 0.3s ease;
 }
 
-.dropdown:hover .chevron {
+.dropdown:hover .chevron,
+.dropdown:focus-within .chevron {
     transform: rotate(180deg);
 }
 
@@ -123,7 +124,8 @@ html {
     transition: opacity 0.4s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s;
 }
 
-.dropdown:hover .dropdown-content {
+.dropdown:hover .dropdown-content,
+.dropdown:focus-within .dropdown-content {
     visibility: visible;
     opacity: 1;
     transform: translateY(0);
