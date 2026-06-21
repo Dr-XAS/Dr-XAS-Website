@@ -203,6 +203,33 @@ html {
     flex-shrink: 0;
 }
 
+.menu-gradient-title {
+    display: inline-block;
+    color: transparent !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+}
+
+.menu-gradient-drxas {
+    background: linear-gradient(90deg, #3b0f70, #8c2981, #de4968, #fe9f6d);
+}
+
+.menu-gradient-xaspert {
+    background: linear-gradient(90deg, #f36f63, #fd9b6b, #fec287);
+}
+
+.menu-gradient-xasbench {
+    background: linear-gradient(90deg, #b5367a, #e65064, #f47461);
+}
+
+.menu-gradient-xasperiment {
+    background: linear-gradient(90deg, #7e2584, #a83280, #c83e75);
+}
+
+.menu-gradient-xasight {
+    background: linear-gradient(90deg, #1c1044, #3f0f70, #68177f);
+}
+
 .mega-desc {
     color: #5f6368;
     font-size: 0.95rem;
