@@ -770,6 +770,7 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
                     module: moduleName,
                     index: i,
                     formsTarget: !edgeParticle && Math.random() > 0.28,
+                    gravityStrength: 0.1 + Math.random() * 0.18,
                     colorVal: moduleMagmaValue(moduleName, Math.random()),
                     baseX: start.x,
                     baseY: start.y,
@@ -897,12 +898,21 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
             let target = randomTargetForParticle(particle, time);
             const isActive = activeModule === particle.module;
 
-            if (isActive && particle.formsTarget && waveTargets[particle.module].length > 0) {
-                const waveTarget = waveTargets[particle.module][particle.index % waveTargets[particle.module].length];
-                target = rotatedWaveTarget(particle.module, waveTarget, time);
+            if (isActive && waveTargets[particle.module].length > 0) {
+                const waveIndex = (particle.index * 3 + Math.floor(particle.phase * 11)) % waveTargets[particle.module].length;
+                const waveTarget = rotatedWaveTarget(particle.module, waveTargets[particle.module][waveIndex], time);
+
+                if (particle.formsTarget) {
+                    target = waveTarget;
+                } else {
+                    target = {
+                        x: target.x + (waveTarget.x - target.x) * particle.gravityStrength,
+                        y: target.y + (waveTarget.y - target.y) * particle.gravityStrength
+                    };
+                }
             }
 
-            const easing = isActive && particle.formsTarget ? 0.038 : 0.018;
+            const easing = isActive && particle.formsTarget ? 0.038 : (isActive ? 0.011 : 0.018);
             particle.x += (target.x - particle.x) * easing;
             particle.y += (target.y - particle.y) * easing;
 
