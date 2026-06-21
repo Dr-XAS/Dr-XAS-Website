@@ -13,7 +13,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Roboto:wght@400;500;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=38">
+    <link rel="stylesheet" href="style.css?v=52">
 </head>
 
 <body>
@@ -44,7 +44,7 @@
                             <a href="#demo-drxas" class="mega-link mega-compact"
                                 onclick="document.querySelector('.nav-links').classList.remove('active'); document.querySelector('.mobile-menu-btn').classList.remove('open');">
                                 <div class="mega-content-row">
-                                    <span class="mega-title magma-color-3">Dr. XAS</span>
+                                    <span class="mega-title menu-gradient-title menu-gradient-drxas">Dr. XAS</span>
                                     <span class="mega-desc">The AI companion for X-ray absorption spectroscopy.</span>
                                 </div>
                             </a>
@@ -55,7 +55,7 @@
                             <a href="#demo-drxas" class="mega-link mega-compact"
                                 onclick="document.querySelector('.nav-links').classList.remove('active'); document.querySelector('.mobile-menu-btn').classList.remove('open');">
                                 <div class="mega-content-row">
-                                    <span class="mega-title magma-color-3">XASpert</span>
+                                    <span class="mega-title menu-gradient-title menu-gradient-xaspert">XASpert</span>
                                     <span class="mega-desc">Agentic scientific reasoning, literature grounding, and hypothesis generation.</span>
                                 </div>
                             </a>
@@ -63,7 +63,7 @@
                             <a href="#demo-xasbench" class="mega-link mega-compact"
                                 onclick="document.querySelector('.nav-links').classList.remove('active'); document.querySelector('.mobile-menu-btn').classList.remove('open');">
                                 <div class="mega-content-row">
-                                    <span class="mega-title magma-color-1">XASbench</span>
+                                    <span class="mega-title menu-gradient-title menu-gradient-xasbench">XASbench</span>
                                     <span class="mega-desc">Trusted data and benchmarking backbone powering the XAS ecosystem.</span>
                                 </div>
                             </a>
@@ -71,7 +71,7 @@
                             <a href="#demo-xasprep" class="mega-link mega-compact"
                                 onclick="document.querySelector('.nav-links').classList.remove('active'); document.querySelector('.mobile-menu-btn').classList.remove('open');">
                                 <div class="mega-content-row">
-                                    <span class="mega-title magma-color-2">XASperiment</span>
+                                    <span class="mega-title menu-gradient-title menu-gradient-xasperiment">XASperiment</span>
                                     <span class="mega-desc">Guided experiment design and beam-ready sample preparation.</span>
                                 </div>
                             </a>
@@ -79,7 +79,7 @@
                             <div class="mega-link mega-compact"
                                 style="cursor: default;">
                                 <div class="mega-content-row">
-                                    <span class="mega-title magma-color-3">XASight</span>
+                                    <span class="mega-title menu-gradient-title menu-gradient-xasight">XASight</span>
                                     <span class="mega-desc">Physics-informed AI for autonomous spectral analysis, simulation, and insight generation.</span>
                                 </div>
                             </div>
@@ -112,6 +112,34 @@
                         access</a>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- Dr. XAS Ecosystem Section -->
+    <section class="ecosystem-section" id="ecosystem" aria-label="Dr. XAS ecosystem modules">
+        <canvas id="ecosystemCanvas" aria-hidden="true"></canvas>
+
+        <div class="ecosystem-modules" id="ecosystem-modules" aria-label="Dr. XAS ecosystem modules">
+            <button class="ecosystem-module ecosystem-module-xaspert" type="button" data-ecosystem-module="XASpert"
+                aria-pressed="false">
+                <span>XASpert</span>
+                <small>literature grounding</small>
+            </button>
+            <button class="ecosystem-module ecosystem-module-xasbench" type="button" data-ecosystem-module="XASbench"
+                aria-pressed="false">
+                <span>XASbench</span>
+                <small>Trusted benchmarks</small>
+            </button>
+            <button class="ecosystem-module ecosystem-module-xasperiment" type="button" data-ecosystem-module="XASperiment"
+                aria-pressed="false">
+                <span>XASperiment</span>
+                <small>experiment planning</small>
+            </button>
+            <button class="ecosystem-module ecosystem-module-xasight" type="button" data-ecosystem-module="XASight"
+                aria-pressed="false">
+                <span>XASight</span>
+                <small>insight &amp; discovery</small>
+            </button>
         </div>
     </section>
 
@@ -162,7 +190,7 @@
         </a>
         <a href="#demo-xasprep" class="dot-item group-2" data-target="demo-xasprep">
             <span class="dot-indicator"></span>
-            <span class="dot-label">XASprep</span>
+            <span class="dot-label">XASperiment</span>
         </a>
         <a href="#demo-xasbench" class="dot-item group-1" data-target="demo-xasbench">
             <span class="dot-indicator"></span>
@@ -220,7 +248,7 @@
         </div>
     </footer>
 
-    <script src="script.js?v=23"></script>
+    <script src="script.js?v=44"></script>
 </body>
 
 </html>
