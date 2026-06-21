@@ -147,7 +147,8 @@ html {
 
 .mega-left-col {
     display: flex;
-    flex: 1;
+    flex: 0 0 33%;
+    max-width: 420px;
 }
 
 .mega-link {
@@ -208,6 +209,21 @@ html {
     line-height: 1.5;
 }
 
+.mega-left-col .mega-content-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+}
+
+.mega-col .mega-content-row {
+    flex-wrap: nowrap;
+}
+
+.mega-col .mega-desc {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
 /* Magma Color Utility Classes */
 .magma-color-1 {
     color: #f7705c !important;
@@ -225,7 +241,7 @@ html {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    flex: 1;
+    flex: 1 1 auto;
 }
 
 /* Thin Frame Dividers */
@@ -247,6 +263,12 @@ html {
         width: 100%;
     }
 
+    .mega-left-col {
+        flex: 1;
+        max-width: none;
+        width: 100%;
+    }
+
     .divider-left {
         border-left: none;
         padding-left: 0;
@@ -257,6 +279,10 @@ html {
     .mega-content-row {
         flex-direction: column;
         gap: 4px;
+    }
+
+    .mega-col .mega-content-row {
+        flex-wrap: wrap;
     }
 
     .mega-menu-inner.layout-divider {
