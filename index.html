@@ -13,7 +13,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Roboto:wght@400;500;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=52">
+    <link rel="stylesheet" href="style.css?v=57">
 </head>
 
 <body>
@@ -108,12 +108,31 @@
                 <!-- Action Buttons added below subtitle -->
                 <div class="hero-buttons">
                     <a href="#demo-drxas" class="btn btn-primary">See demo</a>
-                    <a href="https://forms.gle/YVy7SZe7Ekq5RNkg7" class="btn btn-secondary" target="_blank">Beta
-                        access</a>
+                    <button type="button" class="btn btn-secondary" data-beta-modal-open>Beta access</button>
                 </div>
             </div>
         </div>
     </section>
+
+    <dialog class="beta-modal" id="beta-access-modal" aria-labelledby="beta-modal-title">
+        <div class="beta-modal-card">
+            <button type="button" class="beta-modal-close" data-beta-modal-close aria-label="Close beta access message">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M6 6l12 12M18 6L6 18" />
+                </svg>
+            </button>
+            <canvas class="beta-modal-wave" id="beta-modal-wave" aria-hidden="true"></canvas>
+            <h2 id="beta-modal-title">Beta access</h2>
+            <p class="beta-modal-message">
+                Currently, beta access is available only to internal Argonne users. Please contact
+                <a href="mailto:juanjuan.huang@anl.gov">juanjuan.huang@anl.gov</a> to request access.
+            </p>
+            <div class="beta-modal-actions">
+                <a href="mailto:juanjuan.huang@anl.gov" class="btn btn-primary">Contact</a>
+                <button type="button" class="btn btn-secondary" data-beta-modal-close>Close</button>
+            </div>
+        </div>
+    </dialog>
 
     <!-- Dr. XAS Ecosystem Section -->
     <section class="ecosystem-section" id="ecosystem" aria-label="Dr. XAS ecosystem modules">
@@ -248,7 +267,7 @@
         </div>
     </footer>
 
-    <script src="script.js?v=44"></script>
+    <script src="script.js?v=48"></script>
 </body>
 
 </html>

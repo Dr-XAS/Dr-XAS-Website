@@ -293,6 +293,250 @@ if (mobileBtn && navLinks) {
     });
 }
 
+// --- Beta Access Modal ---
+const betaModal = document.getElementById('beta-access-modal');
+const betaModalOpenButton = document.querySelector('[data-beta-modal-open]');
+const betaModalCloseButtons = document.querySelectorAll('[data-beta-modal-close]');
+const betaModalWaveCanvas = document.getElementById('beta-modal-wave');
+const betaModalWaveCtx = betaModalWaveCanvas ? betaModalWaveCanvas.getContext('2d') : null;
+const betaModalWaveReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+let betaModalReturnTarget = null;
+let betaModalWaveFrame = null;
+let betaModalWaveWidth = 0;
+let betaModalWaveHeight = 0;
+let betaModalWaveDpr = 1;
+
+function restoreBetaModalFocus() {
+    if (betaModalReturnTarget && typeof betaModalReturnTarget.focus === 'function') {
+        betaModalReturnTarget.focus({ preventScroll: true });
+    }
+
+    betaModalReturnTarget = null;
+}
+
+function betaModalWaveNoise(x, z, time) {
+    return (
+        Math.sin(x * 0.063 + z * 0.21 + time * 0.0011) * 0.56 +
+        Math.sin(x * 0.027 - z * 0.31 + time * 0.0017) * 0.32 +
+        Math.sin((x + z) * 0.043 + time * 0.0014) * 0.24 +
+        Math.cos((x - z) * 0.071 - time * 0.001) * 0.16
+    );
+}
+
+function betaModalWaveSeed(row, col, salt = 0) {
+    const value = Math.sin(row * 127.1 + col * 311.7 + salt * 74.7) * 43758.5453123;
+    return value - Math.floor(value);
+}
+
+function resizeBetaModalWaveCanvas() {
+    if (!betaModalWaveCanvas || !betaModalWaveCtx) return false;
+
+    const rect = betaModalWaveCanvas.getBoundingClientRect();
+    const width = Math.max(1, Math.round(rect.width));
+    const height = Math.max(1, Math.round(rect.height));
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+    if (width === betaModalWaveWidth && height === betaModalWaveHeight && dpr === betaModalWaveDpr) {
+        return false;
+    }
+
+    betaModalWaveWidth = width;
+    betaModalWaveHeight = height;
+    betaModalWaveDpr = dpr;
+    betaModalWaveCanvas.width = Math.floor(width * dpr);
+    betaModalWaveCanvas.height = Math.floor(height * dpr);
+    betaModalWaveCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return true;
+}
+
+function drawBetaModalWave(time = 0) {
+    if (!betaModalWaveCanvas || !betaModalWaveCtx) return;
+
+    resizeBetaModalWaveCanvas();
+
+    const ctx = betaModalWaveCtx;
+    const width = betaModalWaveWidth;
+    const height = betaModalWaveHeight;
+    const columns = width < 330 ? 34 : 44;
+    const rows = 13;
+    const points = [];
+
+    ctx.clearRect(0, 0, width, height);
+
+    for (let row = 0; row < rows; row++) {
+        const depth = row / Math.max(1, rows - 1);
+        const rowPoints = [];
+        const perspective = 0.52 + depth * 0.62;
+        const z = (depth - 0.5) * height * 0.78;
+        const amplitude = height * (0.055 + depth * 0.055);
+        const lateralSkew = (depth - 0.5) * 30;
+
+        for (let col = 0; col < columns; col++) {
+            const xNorm = col / Math.max(1, columns - 1);
+            const baseX = xNorm * width;
+            const jitterX = (betaModalWaveSeed(row, col, 1) - 0.5) * 10;
+            const jitterY = (betaModalWaveSeed(row, col, 2) - 0.5) * 8;
+            const scaleJitter = betaModalWaveSeed(row, col, 3);
+            const phaseJitter = (betaModalWaveSeed(row, col, 4) - 0.5) * 0.9;
+            const phase = xNorm * Math.PI * 5.2 - time * 0.0036 + depth * 1.05 + phaseJitter;
+            const noise = betaModalWaveNoise(baseX, z, time);
+            const flow = (Math.sin(xNorm * Math.PI * 2 - time * 0.0026 + depth * 0.7) + 1) / 2;
+            const x = baseX + lateralSkew * Math.cos(time * 0.00075 + depth * 1.4) + jitterX;
+            const y = height * 0.5 + z * 0.32 + Math.sin(phase) * amplitude * perspective + noise * height * 0.052 + jitterY;
+            const centerDistance = Math.abs(xNorm - 0.5) * 2;
+            const edgeFade = Math.max(0, 1 - Math.pow(centerDistance, 1.7));
+            const depthFade = 0.5 + depth * 0.5;
+
+            rowPoints.push({
+                x,
+                y,
+                colorVal: Math.min(1, 0.18 + depth * 0.42 + flow * 0.4),
+                alpha: Math.min(0.4, (0.06 + depth * 0.1 + flow * 0.15) * edgeFade * depthFade),
+                size: 0.42 + depth * 0.7 + flow * 0.34 + scaleJitter * 0.48
+            });
+        }
+
+        points.push(rowPoints);
+    }
+
+    points.forEach((rowPoints, rowIndex) => {
+        const depth = rowIndex / Math.max(1, rows - 1);
+        ctx.beginPath();
+        rowPoints.forEach((point, index) => {
+            if (index === 0) {
+                ctx.moveTo(point.x, point.y);
+            } else {
+                ctx.lineTo(point.x, point.y);
+            }
+        });
+        ctx.lineWidth = 0.42 + depth * 0.18;
+        ctx.strokeStyle = getMagmaColorRGBA(0.28 + depth * 0.46, 0.045 + depth * 0.07);
+        ctx.stroke();
+    });
+
+    for (let col = 0; col < columns; col += 4) {
+        ctx.beginPath();
+        points.forEach((rowPoints, rowIndex) => {
+            const point = rowPoints[col];
+            if (rowIndex === 0) {
+                ctx.moveTo(point.x, point.y);
+            } else {
+                ctx.lineTo(point.x, point.y);
+            }
+        });
+        ctx.lineWidth = 0.35;
+        ctx.strokeStyle = 'rgba(59, 15, 112, 0.045)';
+        ctx.stroke();
+    }
+
+    points.flat().forEach(point => {
+        ctx.fillStyle = getMagmaColorRGBA(point.colorVal, point.alpha);
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, point.size, 0, Math.PI * 2);
+        ctx.fill();
+    });
+}
+
+function animateBetaModalWave(time) {
+    drawBetaModalWave(time);
+
+    if (!betaModalWaveReducedMotion.matches && betaModal && betaModal.open) {
+        betaModalWaveFrame = window.requestAnimationFrame(animateBetaModalWave);
+    }
+}
+
+function startBetaModalWave() {
+    if (!betaModalWaveCanvas || !betaModalWaveCtx) return;
+
+    if (betaModalWaveFrame) {
+        window.cancelAnimationFrame(betaModalWaveFrame);
+        betaModalWaveFrame = null;
+    }
+
+    drawBetaModalWave(performance.now());
+
+    if (!betaModalWaveReducedMotion.matches) {
+        betaModalWaveFrame = window.requestAnimationFrame(animateBetaModalWave);
+    }
+}
+
+function stopBetaModalWave() {
+    if (!betaModalWaveFrame) return;
+
+    window.cancelAnimationFrame(betaModalWaveFrame);
+    betaModalWaveFrame = null;
+}
+
+function openBetaModal() {
+    if (!betaModal) return;
+
+    betaModalReturnTarget = document.activeElement;
+
+    if (betaModal.open) return;
+
+    if (typeof betaModal.showModal === 'function') {
+        betaModal.showModal();
+    } else {
+        betaModal.setAttribute('open', '');
+    }
+
+    document.body.classList.add('modal-open');
+
+    const closeButton = betaModal.querySelector('[data-beta-modal-close]');
+    window.requestAnimationFrame(() => {
+        startBetaModalWave();
+
+        if (closeButton) {
+            closeButton.focus({ preventScroll: true });
+        }
+    });
+}
+
+function closeBetaModal() {
+    if (!betaModal) return;
+
+    if (typeof betaModal.close === 'function' && betaModal.open) {
+        betaModal.close();
+    } else {
+        betaModal.removeAttribute('open');
+        stopBetaModalWave();
+        document.body.classList.remove('modal-open');
+        restoreBetaModalFocus();
+    }
+}
+
+if (betaModal && betaModalOpenButton) {
+    betaModalOpenButton.addEventListener('click', openBetaModal);
+
+    betaModalCloseButtons.forEach(button => {
+        button.addEventListener('click', closeBetaModal);
+    });
+
+    betaModal.addEventListener('click', (event) => {
+        if (event.target === betaModal) {
+            closeBetaModal();
+        }
+    });
+
+    betaModal.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+            closeBetaModal();
+        }
+    });
+
+    betaModal.addEventListener('close', () => {
+        stopBetaModalWave();
+        document.body.classList.remove('modal-open');
+        restoreBetaModalFocus();
+    });
+}
+
+window.addEventListener('resize', () => {
+    if (betaModal && betaModal.open) {
+        drawBetaModalWave(performance.now());
+    }
+});
+
 // --- Elegant Typewriter Effect ---
 const typewriterTextElement = document.getElementById('typewriter-text');
 const fullText = "The next generation AI companion<br>for X-ray absorption spectroscopy.";
