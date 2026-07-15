@@ -48,6 +48,14 @@ This website is designed and configured to be easily deployed via **GitHub Pages
 
 Any pushes to the main branch will automatically update the live static website served by GitHub automatically.
 
+## Permanent QR Redirect
+
+The permanent QR code URL is **<https://dr-xas.org/go>**. Its current destination is stored separately in [`go/target.json`](go/target.json), so the printed QR code never needs to change.
+
+To point the QR code somewhere new, edit only the `target` value in `go/target.json` and deploy the change. Use a complete `https://` or `http://` URL. The redirect page bypasses the normal GitHub Pages asset cache when it reads this file, so returning visitors receive the latest destination.
+
+A print-ready PNG containing the fixed QR code is available at [`go/dr-xas-go-qr.png`](go/dr-xas-go-qr.png).
+
 ## Contact
 
 - **Email**: <dr.xas.drx@gmail.com>

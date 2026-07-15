@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <title>Redirecting… | Dr. XAS</title>
+    <link rel="icon" type="image/png" href="../drxas_logo_small.png">
+    <style>
+        :root {
+            color-scheme: light dark;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        body {
+            align-items: center;
+            display: flex;
+            justify-content: center;
+            margin: 0;
+            min-height: 100vh;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        main {
+            max-width: 32rem;
+        }
+
+        a {
+            overflow-wrap: anywhere;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <h1>Redirecting…</h1>
+        <p id="status">Taking you to the current Dr. XAS website.</p>
+        <p><a id="continue-link" href="https://dr-xas.org/">Continue manually</a></p>
+        <noscript>
+            <p>JavaScript is required for the configurable redirect. Use the link above to continue.</p>
+        </noscript>
+    </main>
+
+    <script>
+        (() => {
+            const status = document.getElementById("status");
+            const continueLink = document.getElementById("continue-link");
+            const configUrl = new URL("./target.json", window.location.href);
+
+            // GitHub Pages caches static files. A unique query value ensures each
+            // visit reads the latest redirect target after target.json is updated.
+            configUrl.searchParams.set("v", Date.now().toString());
+
+            fetch(configUrl, {
+                cache: "no-store",
+                headers: { "Accept": "application/json" }
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`Unable to load redirect target (${response.status})`);
+                    }
+
+                    return response.json();
+                })
+                .then((config) => {
+                    const target = new URL(config.target);
+                    const canonicalPath = (url) => {
+                        const path = url.pathname.replace(/\/+$/, "") || "/";
+                        return `${url.origin}${path}`;
+                    };
+
+                    if (target.protocol !== "https:" && target.protocol !== "http:") {
+                        throw new Error("Redirect target must use HTTP or HTTPS");
+                    }
+
+                    if (canonicalPath(target) === canonicalPath(window.location)) {
+                        throw new Error("Redirect target cannot point back to this page");
+                    }
+
+                    continueLink.href = target.href;
+                    continueLink.textContent = `Continue to ${target.hostname}`;
+                    window.location.replace(target.href);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    status.textContent = "The automatic redirect is temporarily unavailable.";
+                    continueLink.textContent = "Go to the Dr. XAS homepage";
+                });
+        })();
+    </script>
+</body>
+
+</html>
