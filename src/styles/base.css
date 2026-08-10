@@ -1,0 +1,75 @@
+body,
+html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden; /* Allow vertical scrolling, prevent horizontal */
+  background-color: var(--color-bg);
+  font-family: var(--font-brand);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body.modal-open {
+  overflow: hidden;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+#particleCanvas {
+  position: fixed; /* Fixed so it creates a nice parallax behind scroll items */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 1;
+  pointer-events: none; /* Let clicks pass through */
+}
+
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes blink {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Not present in the legacy stylesheet at all (plan section 4/13 — the
+   original ignored this setting entirely). The hero and ecosystem canvases
+   handle their own reduced-motion behavior in JS; this covers the
+   CSS-only animations/transitions. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .logo,
+  .hero-buttons {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .cursor {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+}

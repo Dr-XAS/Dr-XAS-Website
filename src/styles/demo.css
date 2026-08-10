@@ -1,0 +1,72 @@
+/* --- Added Video Section --- */
+.demo-section {
+  position: relative;
+  width: 100%;
+  height: 100vh; /* Full viewport height */
+  background-color: var(--color-bg-video);
+  z-index: 20;
+  overflow: hidden;
+}
+
+/* --- Demo Video Overlay --- */
+.video-overlay-content {
+  position: absolute;
+  bottom: 60px; /* Distance from the bottom of the video section */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.5s ease 0.3s; /* Fade in shortly after the section is reached */
+  pointer-events: none;
+}
+
+/* Show the overlay when the video is active */
+.demo-section .demo-video.active ~ .video-overlay-content {
+  opacity: 1;
+  pointer-events: auto; /* Let people click the button */
+}
+
+.video-wrapper {
+  position: relative;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1; /* Behind text */
+}
+
+.demo-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Fill the entire section, cropping if necessary */
+  display: block;
+  background-color: var(--color-bg-video);
+}
+
+@media (max-width: 900px) {
+  .demo-section {
+    height: auto;
+    min-height: 0;
+    aspect-ratio: auto;
+    background-color: transparent;
+  }
+
+  /* Collapsed from three ID-scoped rules (style.css:1329-1339,
+     `#demo-drxas`/`#demo-xasprep`/`#demo-xasbench .video-wrapper`) into one,
+     driven by the `--demo-aspect` custom property set inline per demo in
+     DemoSection.tsx — see src/data/demos.ts's `aspectMobile` field. */
+  .video-wrapper {
+    height: auto;
+    aspect-ratio: var(--demo-aspect, 16 / 9);
+  }
+
+  .demo-video {
+    height: 100%;
+    max-height: none;
+    object-fit: cover;
+  }
+
+  .video-overlay-content {
+    bottom: 20px;
+  }
+}

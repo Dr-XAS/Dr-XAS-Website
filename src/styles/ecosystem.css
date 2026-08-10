@@ -1,0 +1,144 @@
+/* --- Ecosystem Particle Section --- */
+.ecosystem-section {
+  position: relative;
+  min-height: 0;
+  scroll-margin-top: 0;
+  width: 100%;
+  overflow: hidden;
+  background: var(--color-bg);
+  color: #111111;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 0 28px;
+  box-sizing: border-box;
+  z-index: 25;
+  isolation: isolate;
+}
+
+#ecosystemCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.ecosystem-modules {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  margin-top: 0;
+  pointer-events: auto;
+}
+
+.ecosystem-module {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 0;
+  aspect-ratio: 1 / 1;
+  padding: 22px 24px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  /* Collapsed from four `.ecosystem-module-<product>` rules (style.css:897-939)
+     into one, driven by `--product-accent`/`--product-gradient` set inline
+     per product in EcosystemSection.tsx. drxas never renders a module button
+     (see products.ts's `inEcosystem: false`), so every button here always
+     has these vars set — the brand-purple fallback is unreachable but kept
+     for safety. */
+  color: var(--product-accent, var(--brand-purple));
+  font-family: var(--font-heading);
+  text-align: center;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: none;
+  transition: background-color 0.2s ease;
+}
+
+.ecosystem-module span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2;
+  width: calc(100% - 44px);
+  transform: translate(-50%, -50%);
+  font-size: 1.34rem;
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+  overflow-wrap: break-word;
+  background: var(--product-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.ecosystem-module small {
+  position: absolute;
+  top: calc(50% + 28px);
+  left: 50%;
+  z-index: 2;
+  width: calc(100% - 44px);
+  transform: translateX(-50%);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 500;
+  line-height: 1.2;
+  text-align: center;
+}
+
+.ecosystem-module:hover,
+.ecosystem-module:focus-visible,
+.ecosystem-module.is-active {
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: none;
+  outline: none;
+}
+
+.ecosystem-module.is-active small {
+  color: #3c4043;
+}
+
+@media (max-width: 900px) {
+  .ecosystem-section {
+    min-height: auto;
+    padding: 28px 20px;
+    max-width: 100vw;
+  }
+
+  .ecosystem-modules {
+    grid-template-columns: 1fr;
+    width: 100%;
+    max-width: 360px;
+    gap: 14px;
+    margin-top: 0;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .ecosystem-module {
+    min-height: 170px;
+    aspect-ratio: auto;
+    padding: 18px;
+  }
+
+  .ecosystem-module span {
+    font-size: 1rem;
+  }
+
+  .ecosystem-module small {
+    font-size: 0.68rem;
+  }
+}

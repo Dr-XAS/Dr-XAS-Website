@@ -1,0 +1,110 @@
+/* --- Left Side Dot Navigation --- */
+.dot-nav {
+  position: fixed;
+  left: 40px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  z-index: 30; /* Always above video */
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.dot-nav.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.dot-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  text-decoration: none; /* Add this because they are now anchor tags */
+}
+
+.dot-item:hover {
+  opacity: 0.8;
+}
+
+.dot-item.active {
+  opacity: 1;
+}
+
+.dot-indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid #ffffff; /* Keep hollow */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  background-color: transparent; /* Always transparent inside */
+  transition: all 0.4s var(--ease-spring);
+}
+
+.dot-label {
+  color: #ffffff; /* Contrast on video */
+  font-size: 1rem; /* Match nav font size */
+  font-family: var(--font-heading);
+  font-weight: 400; /* Match nav weight */
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: opacity 0.3s var(--ease-spring), transform 0.3s var(--ease-spring), color 0.3s ease;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5); /* Shadow for readability on video */
+}
+
+/* Show label when active or hovered */
+.dot-item.active .dot-label,
+.dot-item:hover .dot-label {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* Magma gradient coloring for active dots — only change outline and glow,
+   keep hollow. Collapsed from three `.dot-item.active.group-N` rules
+   (style.css:743-769) into one pair driven by `--dot-color` and
+   `--dot-label-color` (they differ for group-3, see products.ts's
+   `dotLabel` doc — finding 4). Set inline per product in DotNav.tsx. */
+.dot-item.active .dot-indicator {
+  border-color: var(--dot-color);
+  box-shadow: 0 0 15px color-mix(in srgb, var(--dot-color) 60%, transparent);
+}
+
+.dot-item.active .dot-label {
+  color: var(--dot-label-color, var(--dot-color));
+}
+
+.dot-item:hover:not(.active) .dot-indicator {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+@media (max-width: 900px) {
+  .dot-nav {
+    /* Move to bottom center */
+    left: 50%;
+    top: auto;
+    bottom: 20px;
+    transform: translateX(-50%);
+    flex-direction: row; /* Horizontal dots */
+    gap: 16px;
+  }
+
+  .dot-item {
+    flex-direction: column; /* Align dot and label vertically */
+    gap: 8px;
+  }
+
+  .dot-label {
+    font-size: 0.8rem;
+    transform: translateY(10px); /* Hide label downwards initially instead of left */
+  }
+
+  .dot-item.active .dot-label,
+  .dot-item:hover .dot-label {
+    transform: translateY(0);
+  }
+}

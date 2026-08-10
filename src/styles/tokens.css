@@ -1,0 +1,84 @@
+/*
+ * Design tokens extracted from DESIGN.md. This file is pure values — no
+ * selectors — so every other stylesheet in this directory can reference
+ * `var(--...)` instead of repeating hex codes and magic numbers.
+ *
+ * Two documented gaps (see the migration plan, section 5):
+ *  1. `@media` queries cannot consume custom properties, so the 900px/600px
+ *     breakpoints stay literal in every file that needs them.
+ *  2. The canvas engines (src/canvas/*.ts) do NOT read these values via
+ *     getComputedStyle — they need a plain numeric array at 60fps. The
+ *     11-stop magma scale below is deliberately duplicated in
+ *     src/canvas/magma.ts; keep the two in sync if either changes.
+ */
+
+:root {
+  /* --- Magma colormap (11 stops), see src/canvas/magma.ts --- */
+  --magma-0: #000004;
+  --magma-1: #140e36;
+  --magma-2: #3b0f70;
+  --magma-3: #641a80;
+  --magma-4: #8c2981;
+  --magma-5: #b73779;
+  --magma-6: #de4968;
+  --magma-7: #f7705c;
+  --magma-8: #fe9f6d;
+  --magma-9: #fecf92;
+  --magma-10: #fcfdbf;
+
+  /* --- Semantic brand aliases (DESIGN.md section 3) --- */
+  --brand-purple: var(--magma-2); /* GitHub icon, group-3 dot indicator */
+  --brand-magenta: var(--magma-4); /* X icon */
+  --brand-pink: var(--magma-5); /* form focus states, group-2 dot indicator */
+  --brand-coral: var(--magma-7); /* group-1 dot indicator */
+  --brand-deep: #1f005c; /* btn-primary gradient start — darker than any magma stop */
+  --brand-light-purple: #9d5de4; /* group-3 dot LABEL override — see products.ts dotLabel doc */
+
+  /* --- Neutrals --- */
+  --color-bg: #ffffff;
+  --color-bg-video: #000000;
+  --text-primary: #1f1f1f;
+  --text-nav: #444746;
+  --text-secondary: #5f6368;
+  --text-faint: #9aa0a6;
+  --text-modal-body: #444746;
+  --border-divider: #f1f3f4;
+  --border-hairline: #e0e0e0;
+  --border-subtle: rgba(0, 0, 0, 0.05);
+
+  /* --- Signature gradients --- */
+  --grad-primary: linear-gradient(135deg, rgba(31, 0, 92, 0.85) 0%, rgba(183, 55, 121, 0.85) 100%);
+  --grad-magma-text: linear-gradient(
+    110deg,
+    var(--text-primary) 0%,
+    var(--text-primary) 65%,
+    var(--brand-purple) 80%,
+    var(--brand-pink) 92%,
+    var(--brand-coral) 100%
+  );
+  --grad-cursor: linear-gradient(to bottom, var(--text-primary) 0%, var(--text-primary) 60%, var(--brand-pink) 85%, var(--brand-coral) 100%);
+  --grad-modal-title: linear-gradient(90deg, var(--brand-purple) 0%, var(--brand-magenta) 42%, var(--magma-6) 74%, var(--brand-coral) 100%);
+
+  /* --- Typography --- */
+  --font-brand: 'Google Sans', 'Google Sans Text', 'Outfit', Roboto, Arial, sans-serif;
+  --font-heading: 'Google Sans', 'Outfit', sans-serif;
+  --font-body: 'Outfit', sans-serif;
+
+  /* --- Geometry --- */
+  --radius-card: 12px;
+  --radius-pill: 40px;
+  --navbar-h: 64px;
+  --navbar-h-mobile: 60px;
+
+  /* --- Shadows --- */
+  --shadow-dropdown: 0px 12px 32px rgba(0, 0, 0, 0.08);
+  --shadow-btn-primary: 0 4px 14px rgba(0, 0, 0, 0.1);
+  --shadow-btn-primary-hover: 0 6px 20px rgba(0, 0, 0, 0.15);
+  --shadow-modal: 0 22px 56px rgba(24, 12, 42, 0.2), 0 6px 20px rgba(31, 31, 31, 0.08);
+  --shadow-modal-close-hover: 0 8px 24px rgba(31, 31, 31, 0.12);
+
+  /* --- Motion --- */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-fast: 0.2s ease;
+  --transition-med: 0.3s ease;
+}
