@@ -6,55 +6,57 @@ Welcome to the repository for the **Dr. XAS Website**. This project serves as th
 
 ## Overview
 
-The website features an interactive landing page (currently highlighted by the `magma-particles-demo`) that showcases:
+The website features an interactive landing page that showcases:
 
 - **Dr. XAS**: The next generation AI companion for X-ray absorption spectroscopy.
-- **EasyXASCalc**: Advanced calculation and spectrum analysis.
-- **XASbenchmark**: Standardized datasets and benchmarking tools.
+- **XASpert, XASbenchmark, XASperiment, XASight**: the surrounding tool ecosystem.
 
 It utilizes modern web design principles including:
 
-- Interactive 3D particle canvas backgrounds.
+- Interactive particle canvas backgrounds (hero, ecosystem, beta modal).
 - Typing animations.
 - Fully responsive design for desktop and mobile devices.
-- Direct links to community platforms (GitHub, X, Discord) and a beta access signup form.
+- Direct links to community platforms (GitHub, X, Discord) and a beta access signup.
+
+## Stack
+
+Vite + React + TypeScript, with `react-router-dom` for client-side routing. Styling is plain global CSS (see [`DESIGN.md`](DESIGN.md) for the design tokens) — no CSS Modules, no CSS-in-JS.
 
 ## Project Structure
 
-- `magma-particles-demo/` - Contains the main demonstration landing page.
-  - `index.html` - The core HTML structure of the page.
-  - `style.css` - Custom styles, layout designs, and mobile responsiveness logic.
-  - `script.js` - Interactive canvas logic (particle wave animations) and typing effects.
-  - `drxas_logo.png` & `drxas_logo_small.png` - Project branding assets.
-  - `assets/` - Directory for demo videos and extra resources.
+- `src/` — application source.
+  - `routes/`, `layouts/` — pages and the shared site chrome (navbar, footer, beta modal).
+  - `components/` — one directory per section (`hero/`, `ecosystem/`, `demo/`, `nav/`, `footer/`, `beta/`, `icons/`).
+  - `canvas/` — framework-free canvas engines (hero particles, ecosystem particles, beta modal wave). Each is a plain factory function with no React dependency; components wrap them in a `useRef`/`useEffect` pair.
+  - `data/` — the single typed product/demo/social/footer taxonomy that drives the nav, ecosystem, dot-nav, and footer instead of hand-copied markup.
+  - `styles/` — global CSS, split by section and imported in cascade order from `styles/index.css`. `tokens.css` holds the design tokens extracted from `DESIGN.md`.
+  - `assets/demo/` — demo videos and posters, imported so Vite content-hashes them.
+- `public/` — files served byte-for-byte with no hashing: `CNAME`, `.nojekyll`, the two logo PNGs, and `go/` (the permanent QR redirect page — see below).
 
 ## Local Development
 
-Since this is a static website (HTML, CSS, JS), you can serve it locally using Python's built-in HTTP server:
-
 ```bash
-# Navigate to the project demo directory
-cd magma-particles-demo/
-
-# Start a local web server (Python 3)
-python3 -m http.server 8080
+npm install
+npm run dev
 ```
 
-After running the server, navigate to `http://localhost:8080/` in your web browser to view the site.
+Then open the printed `localhost` URL. `npm run build` produces a production build in `dist/`; `npm run preview` serves it locally.
+
+> Note: Vite's dev server (`npm run dev`) doesn't resolve directory-index requests inside `public/`, so `localhost:5173/go/` (trailing slash) falls through to the app instead of the redirect page — `localhost:5173/go/index.html` works, and so does `/go/` under `npm run preview`, which is the one that matters since it mirrors real static hosting.
 
 ## Deployment
 
-This website is designed and configured to be easily deployed via **GitHub Pages**.
-
-Any pushes to the main branch will automatically update the live static website served by GitHub automatically.
+Deployment is automated via GitHub Actions (see `.github/workflows/deploy.yml`) on every push to `main`: install, type-check, build, copy `dist/index.html` to `dist/404.html` for SPA deep-link support on GitHub Pages, verify the `/go/` contract, then publish via `actions/deploy-pages`.
 
 ## Permanent QR Redirect
 
-The permanent QR code URL is **<https://dr-xas.org/go>**. Its current destination is stored separately in [`go/target.json`](go/target.json), so the printed QR code never needs to change.
+The permanent QR code URL is **<https://dr-xas.org/go>**. Its current destination is stored separately in [`public/go/target.json`](public/go/target.json), so the printed QR code never needs to change.
 
-To point the QR code somewhere new, edit only the `target` value in `go/target.json` and deploy the change. Use a complete `https://` or `http://` URL. The redirect page bypasses the normal GitHub Pages asset cache when it reads this file, so returning visitors receive the latest destination.
+To point the QR code somewhere new, edit only the `target` value in `public/go/target.json` and deploy the change. Use a complete `https://` or `http://` URL. The redirect page bypasses the normal GitHub Pages asset cache when it reads this file, so returning visitors receive the latest destination.
 
-A print-ready PNG containing the fixed QR code is available at [`go/dr-xas-go-qr.png`](go/dr-xas-go-qr.png).
+A print-ready PNG containing the fixed QR code is available at [`public/go/dr-xas-go-qr.png`](public/go/dr-xas-go-qr.png).
+
+`public/go/` is never touched by the Vite build or the React router — it is copied verbatim so the printed QR code keeps working forever, independent of any future redesign.
 
 ## Contact
 

@@ -1,6 +1,8 @@
 # Dr. XAS Design System Guidelines
 
-This document serves as the central design system and styling guide for the Dr. XAS project. It codifies the visual language established in the `magma-particles-demo` page so that future subpages, products, and applications maintain a consistent, modern, and aligned aesthetic.
+This document serves as the central design system and styling guide for the Dr. XAS project. It codifies the visual language established on the site so that future subpages, products, and applications maintain a consistent, modern, and aligned aesthetic.
+
+> **Implementation:** every token described below is defined as a CSS custom property in [`src/styles/tokens.css`](src/styles/tokens.css). If you change a value here, change it there too (and vice versa) — they're meant to stay in sync, not duplicated by accident.
 
 ## 1. Core Principles
 
