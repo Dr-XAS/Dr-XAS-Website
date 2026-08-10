@@ -1,2 +1,10 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+*.png binary
+*.jpg binary
+*.mp4 binary
+*.mov binary
+
+# The /go/ QR-redirect page must never be reformatted or touched by tooling.
+public/go/** -diff linguist-generated
