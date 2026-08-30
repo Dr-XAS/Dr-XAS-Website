@@ -733,7 +733,7 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
 
     const ecoCtx = ecosystemCanvas.getContext('2d');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const moduleOrder = ['XASpert', 'XASbench', 'XASperiment', 'XASight'];
+    const moduleOrder = ['XASpert', 'XASbench', 'XASperiment', 'XASight', 'XAScalculation'];
     const moduleConfig = {
         XASpert: {
             color: '#3b0f70',
@@ -750,6 +750,10 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
         XASight: {
             color: '#3b0f70',
             magmaRange: [0.12, 0.32]
+        },
+        XAScalculation: {
+            color: '#2a8f84',
+            magmaRange: [0.02, 0.16]
         }
     };
 
@@ -800,10 +804,10 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
         if (moduleRects[moduleName]) return moduleRects[moduleName];
 
         const index = Math.max(0, moduleOrder.indexOf(moduleName));
-        const columns = isEcoMobile() ? 1 : 4;
-        const rows = isEcoMobile() ? 4 : 1;
+        const columns = isEcoMobile() ? 1 : 5;
+        const rows = isEcoMobile() ? 5 : 1;
         const gap = isEcoMobile() ? 14 : 18;
-        const gridWidth = Math.min(ecoWidth * 0.92, isEcoMobile() ? 360 : 1120);
+        const gridWidth = Math.min(ecoWidth * 0.96, isEcoMobile() ? 360 : 1400);
         const gridHeight = isEcoMobile() ? 720 : 460;
         const cellWidth = (gridWidth - gap * (columns - 1)) / columns;
         const cellHeight = (gridHeight - gap * (rows - 1)) / rows;
@@ -1218,7 +1222,29 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
         document.fonts.ready.then(resizeEcosystemCanvas).catch(() => { });
     }
 
-    window.addEventListener('beforeunload', () => {
-        if (frameId) cancelAnimationFrame(frameId);
+window.addEventListener('beforeunload', () => {
+    if (frameId) cancelAnimationFrame(frameId);
+});
+})();
+
+(function initXasCalculationWorkspaceTabs() {
+    const demo = document.querySelector('.xascalculation-demo-section');
+    if (!demo) return;
+
+    const tabButtons = demo.querySelectorAll('[data-xascalc-tab]');
+    const panels = demo.querySelectorAll('[data-xascalc-panel]');
+
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const target = button.dataset.xascalcTab;
+
+            tabButtons.forEach(tab => {
+                tab.classList.toggle('active', tab === button);
+            });
+
+            panels.forEach(panel => {
+                panel.classList.toggle('active', panel.dataset.xascalcPanel === target);
+            });
+        });
     });
 })();

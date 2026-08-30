@@ -234,6 +234,10 @@ body.modal-open {
     background: linear-gradient(90deg, #1c1044, #3f0f70, #68177f);
 }
 
+.menu-gradient-xascalculation {
+    background: linear-gradient(90deg, #2a8f84, #5f7dd6, #b73779);
+}
+
 .mega-desc {
     color: #5f6368;
     font-size: 0.95rem;
@@ -768,6 +772,15 @@ html {
     /* Using a lighter variation of 3b0f70 for text readability on dark bg */
 }
 
+.dot-item.active.group-4 .dot-indicator {
+    border-color: #2a8f84;
+    box-shadow: 0 0 15px rgba(42, 143, 132, 0.6);
+}
+
+.dot-item.active.group-4 .dot-label {
+    color: #2a8f84;
+}
+
 .dot-item:hover:not(.active) .dot-indicator {
     background-color: rgba(255, 255, 255, 0.3);
 }
@@ -789,6 +802,461 @@ html {
     /* Fill the entire section, cropping if necessary */
     display: block;
     background-color: #000000;
+}
+
+/* --- XAScalculation Demo Section --- */
+.xascalculation-demo-section {
+    background: #fbfbfd;
+    color: #1f1f1f;
+    display: grid;
+    place-items: center;
+    padding: 74px 3.2vw 50px;
+}
+
+.xascalculation-demo {
+    width: min(1600px, 100%);
+    min-height: min(820px, calc(100vh - 128px));
+    display: grid;
+    grid-template-columns: minmax(280px, 360px) minmax(840px, 1fr);
+    gap: 34px;
+    align-items: center;
+}
+
+.xascalc-copy {
+    padding-left: min(2.5vw, 28px);
+}
+
+.xascalc-copy h2 {
+    max-width: 360px;
+    margin: 0;
+    font-family: 'Google Sans', 'Outfit', sans-serif;
+    font-size: 2.55rem;
+    font-weight: 500;
+    line-height: 1.12;
+    letter-spacing: 0;
+    background: linear-gradient(110deg, #1f1f1f 0%, #1f1f1f 48%, #3b0f70 72%, #b73779 90%, #f7705c 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.xascalc-copy p {
+    max-width: 340px;
+    margin: 18px 0 0;
+    color: #5f6368;
+    font-size: 0.98rem;
+    line-height: 1.58;
+}
+
+.xascalc-feature-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    max-width: 335px;
+    margin-top: 28px;
+}
+
+.xascalc-feature {
+    min-height: 76px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 18px;
+    padding: 13px 15px;
+    background: rgba(255, 255, 255, 0.82);
+    color: #5f6368;
+    box-shadow: 0 16px 34px rgba(40, 34, 57, 0.055);
+}
+
+.xascalc-feature strong {
+    color: #1f1f1f;
+    font-size: 1.08rem;
+    line-height: 1.15;
+}
+
+.xascalc-feature span {
+    margin-top: 5px;
+    color: #5f6368;
+    font-size: 0.88rem;
+}
+
+.xascalc-agent-card {
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.09);
+    border-radius: 28px;
+    background: rgba(255, 255, 255, 0.78);
+    box-shadow: 0 34px 100px rgba(55, 40, 78, 0.16);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+.xascalc-card-header {
+    height: 62px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 20px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.xascalc-card-header strong {
+    margin-left: 10px;
+    font-size: 1rem;
+}
+
+.xascalc-card-header small {
+    margin-left: auto;
+    color: #5f6368;
+    font-size: 0.78rem;
+}
+
+.xascalc-window-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+    background: #e7ded8;
+}
+
+.xascalc-window-dot:nth-child(2) {
+    background: #e5ccd7;
+}
+
+.xascalc-window-dot:nth-child(3) {
+    background: #d7d8ec;
+}
+
+.xascalc-card-body {
+    display: grid;
+    grid-template-columns: minmax(520px, 1fr) minmax(270px, 0.42fr);
+    min-height: 695px;
+}
+
+.xascalc-chat {
+    padding: 24px 24px 22px;
+    border-right: 1px solid rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.xascalc-chat-stream {
+    animation: xascalc-chat-scroll 16s ease-in-out 8.2s infinite;
+}
+
+.xascalc-message {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 13px;
+    opacity: 0;
+    transform: translateY(14px);
+    animation: xascalc-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.xascalc-message.user {
+    justify-content: flex-end;
+    margin-left: auto;
+}
+
+.xascalc-message.agent {
+    justify-content: flex-start;
+}
+
+.xascalc-avatar,
+.xascalc-user-avatar {
+    flex: 0 0 auto;
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+}
+
+.xascalc-avatar {
+    object-fit: contain;
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0 7px 18px rgba(55, 40, 78, 0.08);
+}
+
+.xascalc-user-avatar {
+    display: grid;
+    place-items: center;
+    background: #f0eeeb;
+    color: #6f6f6f;
+    font-size: 0.68rem;
+    font-weight: 700;
+}
+
+.xascalc-bubble {
+    max-width: min(620px, 86%);
+    border: 1px solid rgba(0, 0, 0, 0.09);
+    border-radius: 18px;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.78);
+    box-shadow: 0 12px 32px rgba(44, 35, 27, 0.055);
+    color: #1f1f1f;
+    font-size: 0.95rem;
+    line-height: 1.46;
+}
+
+.xascalc-message.user .xascalc-bubble {
+    background: rgba(255, 255, 255, 0.92);
+}
+
+.xascalc-message.tool .xascalc-bubble {
+    padding: 10px 13px;
+    color: #5f6368;
+    font-size: 0.85rem;
+}
+
+.xascalc-message.tool .xascalc-bubble strong {
+    color: #3b0f70;
+}
+
+.xascalc-approval {
+    width: min(450px, 86%);
+    margin: 12px 0 14px 42px;
+    border: 1px solid rgba(183, 55, 121, 0.20);
+    border-radius: 20px;
+    padding: 16px;
+    background: #ffffff;
+    box-shadow: 0 18px 45px rgba(55, 40, 78, 0.10);
+    opacity: 0;
+    transform: translateY(14px);
+    animation: xascalc-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.xascalc-approval strong {
+    display: block;
+    font-size: 1rem;
+}
+
+.xascalc-approval > span {
+    display: block;
+    margin-top: 7px;
+    color: #5f6368;
+    font-size: 0.88rem;
+    line-height: 1.42;
+}
+
+.xascalc-resource-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 13px;
+}
+
+.xascalc-resource-row span {
+    border: 1px solid rgba(0, 0, 0, 0.10);
+    border-radius: 999px;
+    padding: 7px 12px;
+    color: #5f6368;
+    font-size: 0.82rem;
+    font-weight: 600;
+}
+
+.xascalc-resource-row .selected {
+    border-color: transparent;
+    color: #ffffff;
+    background: linear-gradient(135deg, rgba(59, 15, 112, 0.88), rgba(183, 55, 121, 0.90));
+}
+
+.xascalc-approval button {
+    position: relative;
+    margin-top: 14px;
+    border: 0;
+    border-radius: 14px;
+    padding: 10px 14px;
+    background: #c35632;
+    color: #ffffff;
+    font: inherit;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: default;
+    animation: xascalc-approval-click 1.2s ease 7.8s forwards;
+}
+
+.xascalc-chat-plot {
+    display: block;
+    width: 100%;
+    max-width: 560px;
+    margin-top: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 16px;
+    background: #ffffff;
+}
+
+.xascalc-workspace {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    background: rgba(255, 255, 255, 0.52);
+}
+
+.xascalc-workspace-title {
+    padding: 16px 16px 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.xascalc-workspace-title strong,
+.xascalc-workspace-title span {
+    display: block;
+}
+
+.xascalc-workspace-title strong {
+    font-size: 0.98rem;
+}
+
+.xascalc-workspace-title span {
+    margin-top: 3px;
+    color: #6f6f6f;
+    font-size: 0.76rem;
+}
+
+.xascalc-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 7px;
+    padding: 10px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.xascalc-tabs button {
+    border: 1px solid transparent;
+    border-radius: 12px;
+    padding: 9px 6px;
+    background: transparent;
+    color: #5f6368;
+    font: inherit;
+    font-size: 0.82rem;
+    cursor: pointer;
+}
+
+.xascalc-tabs button.active {
+    border-color: rgba(59, 15, 112, 0.22);
+    background: #ffffff;
+    color: #1f1f1f;
+    box-shadow: 0 8px 20px rgba(55, 40, 78, 0.08);
+}
+
+.xascalc-tab-panel {
+    display: none;
+    padding: 14px;
+    overflow: hidden;
+}
+
+.xascalc-tab-panel.active {
+    display: grid;
+    gap: 9px;
+}
+
+.xascalc-feed-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    padding: 11px 12px;
+    background: rgba(255, 255, 255, 0.78);
+    opacity: 0;
+    transform: translateY(12px);
+    animation: xascalc-rise 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.xascalc-feed-row::before {
+    content: "";
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #2f8a52;
+}
+
+.xascalc-feed-row strong {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.76rem;
+}
+
+.xascalc-feed-row span {
+    margin-left: auto;
+    color: #5f6368;
+    font-size: 0.72rem;
+}
+
+.xascalc-file-row,
+.xascalc-run-status {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 14px;
+    padding: 11px 12px;
+    background: rgba(255, 255, 255, 0.78);
+    color: #5f6368;
+    font-size: 0.8rem;
+}
+
+.xascalc-run-status {
+    display: grid;
+    gap: 6px;
+}
+
+.xascalc-run-status strong {
+    color: #2f8a52;
+    font-size: 1rem;
+}
+
+.xascalc-run-status span {
+    color: #5f6368;
+    font-size: 0.78rem;
+}
+
+.xascalc-step-1 { animation-delay: 0.3s; }
+.xascalc-step-2 { animation-delay: 1.1s; }
+.xascalc-step-3 { animation-delay: 2.2s; }
+.xascalc-step-4 { animation-delay: 3.1s; }
+.xascalc-step-5 { animation-delay: 4.1s; }
+.xascalc-step-6 { animation-delay: 5.0s; }
+.xascalc-step-7 { animation-delay: 5.9s; }
+.xascalc-step-8 { animation-delay: 6.8s; }
+.xascalc-step-9 { animation-delay: 8.7s; }
+.xascalc-step-10 { animation-delay: 9.6s; }
+.xascalc-step-11 { animation-delay: 10.8s; }
+.xascalc-feed-1 { animation-delay: 4.4s; }
+.xascalc-feed-2 { animation-delay: 5.3s; }
+.xascalc-feed-3 { animation-delay: 6.2s; }
+.xascalc-feed-4 { animation-delay: 8.9s; }
+.xascalc-feed-5 { animation-delay: 9.9s; }
+.xascalc-feed-6 { animation-delay: 11.2s; }
+
+@keyframes xascalc-rise {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes xascalc-approval-click {
+    0%, 58% {
+        transform: scale(1);
+        background: #c35632;
+    }
+    68% {
+        transform: scale(0.96);
+        background: #9f3f22;
+    }
+    100% {
+        transform: scale(1);
+        background: #2f8a52;
+    }
+}
+
+@keyframes xascalc-chat-scroll {
+    0%, 18% {
+        transform: translateY(0);
+    }
+    36%, 78% {
+        transform: translateY(-246px);
+    }
+    100% {
+        transform: translateY(0);
+    }
 }
 
 /* --- Ecosystem Particle Section --- */
@@ -823,7 +1291,7 @@ html {
     position: relative;
     z-index: 4;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(5, minmax(0, 1fr));
     gap: 0;
     width: 100vw;
     margin-left: calc(50% - 50vw);
@@ -933,6 +1401,17 @@ html {
 
 .ecosystem-module-xasight span {
     background: linear-gradient(90deg, #1c1044, #3f0f70, #68177f);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.ecosystem-module-xascalculation {
+    color: #2a8f84;
+}
+
+.ecosystem-module-xascalculation span {
+    background: linear-gradient(90deg, #2a8f84, #5f7dd6, #b73779);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -1336,6 +1815,47 @@ html {
 
     #demo-xasbench .video-wrapper {
         aspect-ratio: 3024 / 1898;
+    }
+
+    .xascalculation-demo-section {
+        min-height: auto;
+        height: auto;
+        padding: 84px 20px 56px;
+    }
+
+    .xascalculation-demo {
+        min-height: auto;
+        grid-template-columns: 1fr;
+        gap: 26px;
+    }
+
+    .xascalc-copy {
+        padding-left: 0;
+    }
+
+    .xascalc-copy h2 {
+        font-size: 2.35rem;
+    }
+
+    .xascalc-copy p {
+        font-size: 1rem;
+    }
+
+    .xascalc-feature-list {
+        grid-template-columns: 1fr;
+    }
+
+    .xascalc-card-body {
+        grid-template-columns: 1fr;
+    }
+
+    .xascalc-chat {
+        border-right: 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .xascalc-workspace {
+        min-height: 360px;
     }
 
     .demo-video {
