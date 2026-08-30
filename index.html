@@ -13,7 +13,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600&family=Roboto:wght@400;500;700&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=57">
+    <link rel="stylesheet" href="style.css?v=58">
 </head>
 
 <body>
@@ -83,6 +83,14 @@
                                     <span class="mega-desc">Physics-informed AI for autonomous spectral analysis, simulation, and insight generation.</span>
                                 </div>
                             </div>
+                            <div class="divider-horizontal"></div>
+                            <a href="#demo-xascalculation" class="mega-link mega-compact"
+                                onclick="document.querySelector('.nav-links').classList.remove('active'); document.querySelector('.mobile-menu-btn').classList.remove('open');">
+                                <div class="mega-content-row">
+                                    <span class="mega-title menu-gradient-title menu-gradient-xascalculation">XAScalculation</span>
+                                    <span class="mega-desc">Autonomous first-principles XAS input generation, HPC submission, monitoring, and plotting.</span>
+                                </div>
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -159,6 +167,11 @@
                 <span>XASight</span>
                 <small>insight &amp; discovery</small>
             </button>
+            <button class="ecosystem-module ecosystem-module-xascalculation" type="button" data-ecosystem-module="XAScalculation"
+                aria-pressed="false">
+                <span>XAScalculation</span>
+                <small>autonomous computation</small>
+            </button>
         </div>
     </section>
 
@@ -201,6 +214,142 @@
         </div>
     </section>
 
+    <!-- XAScalculation Demo Section -->
+    <section class="demo-section xascalculation-demo-section" id="demo-xascalculation">
+        <div class="xascalculation-demo">
+            <div class="xascalc-copy">
+                <h2>Autonomous XAS calculation agent.</h2>
+                <p>
+                    A chat interface for first-principles XAS workflows. The agent clarifies the request,
+                    chooses tools, prepares native inputs, waits for approval, submits to ALCF resources,
+                    monitors the run, and returns the plotted spectrum.
+                </p>
+                <div class="xascalc-feature-list" aria-label="XAScalculation capabilities">
+                    <div class="xascalc-feature">
+                        <strong>Methods</strong>
+                        <span>Exciting, OCEAN, XSpectra</span>
+                    </div>
+                    <div class="xascalc-feature">
+                        <strong>Tool Calling</strong>
+                        <span>Native generators, schemas, self-checks</span>
+                    </div>
+                    <div class="xascalc-feature">
+                        <strong>HPC Job Submission</strong>
+                        <span>ALCF Aurora and Califone</span>
+                    </div>
+                </div>
+            </div>
+            <div class="xascalc-agent-card" aria-label="XAScalculation agent demo">
+                <div class="xascalc-card-header">
+                    <span class="xascalc-window-dot"></span>
+                    <span class="xascalc-window-dot"></span>
+                    <span class="xascalc-window-dot"></span>
+                    <strong>Dr. XAS Calculation Agent</strong>
+                    <small>Ti K-edge XAS of TiO</small>
+                </div>
+                <div class="xascalc-card-body">
+                    <div class="xascalc-chat">
+                        <div class="xascalc-chat-stream">
+                            <div class="xascalc-message user xascalc-step-1">
+                                <div class="xascalc-bubble">Hello</div>
+                                <div class="xascalc-user-avatar">YOU</div>
+                            </div>
+                            <div class="xascalc-message agent xascalc-step-2">
+                                <img src="drxas_logo_small.png" alt="Dr. XAS" class="xascalc-avatar">
+                                <div class="xascalc-bubble">
+                                    Hi, I’m the Dr. XAS calculation agent. I can prepare XAS inputs, check them,
+                                    submit jobs after your approval, monitor the run, and plot the result.
+                                    What would you like to calculate?
+                                </div>
+                            </div>
+                            <div class="xascalc-message user xascalc-step-3">
+                                <div class="xascalc-bubble">I want to calculate Ti K-edge XAS for TiO using OCEAN.</div>
+                                <div class="xascalc-user-avatar">YOU</div>
+                            </div>
+                            <div class="xascalc-message agent xascalc-step-4">
+                                <img src="drxas_logo_small.png" alt="Dr. XAS" class="xascalc-avatar">
+                                <div class="xascalc-bubble">
+                                    Got it. I’ll use Ti as the absorber and the K edge, build an OCEAN input bundle,
+                                    select Califone for this run, then ask before submitting the job.
+                                </div>
+                            </div>
+                            <div class="xascalc-message agent tool xascalc-step-5">
+                                <img src="drxas_logo_small.png" alt="Dr. XAS" class="xascalc-avatar">
+                                <div class="xascalc-bubble">Tool called: <strong>resolve_structure</strong></div>
+                            </div>
+                            <div class="xascalc-message agent tool xascalc-step-6">
+                                <img src="drxas_logo_small.png" alt="Dr. XAS" class="xascalc-avatar">
+                                <div class="xascalc-bubble">Tool called: <strong>call_native_input_generator</strong></div>
+                            </div>
+                            <div class="xascalc-message agent tool xascalc-step-7">
+                                <img src="drxas_logo_small.png" alt="Dr. XAS" class="xascalc-avatar">
+                                <div class="xascalc-bubble">Tool called: <strong>self_check_generated_inputs</strong></div>
+                            </div>
+                            <div class="xascalc-approval xascalc-step-8" aria-label="HPC submission approval">
+                                <strong>Approve Califone submission</strong>
+                                <span>OCEAN input bundle passed precheck. Submit to ALCF Califone?</span>
+                                <div class="xascalc-resource-row">
+                                    <span>Aurora</span>
+                                    <span class="selected">Califone</span>
+                                </div>
+                                <button type="button">Approve and submit</button>
+                            </div>
+                            <div class="xascalc-message agent tool xascalc-step-9">
+                                <img src="drxas_logo_small.png" alt="Dr. XAS" class="xascalc-avatar">
+                                <div class="xascalc-bubble">Tool called: <strong>submit_hpc_job</strong></div>
+                            </div>
+                            <div class="xascalc-message agent tool xascalc-step-10">
+                                <img src="drxas_logo_small.png" alt="Dr. XAS" class="xascalc-avatar">
+                                <div class="xascalc-bubble">Tool called: <strong>monitor_job</strong></div>
+                            </div>
+                            <div class="xascalc-message agent xascalc-step-11">
+                                <img src="drxas_logo_small.png" alt="Dr. XAS" class="xascalc-avatar">
+                                <div class="xascalc-bubble">
+                                    The Califone job completed successfully. I plotted the normalized Ti K-edge spectrum below.
+                                    <img src="assets/demo/xascalculation_tio_ocean_spectrum_normalized.png"
+                                        alt="Normalized Ti K-edge XAS spectrum from the XAScalculation agent"
+                                        class="xascalc-chat-plot">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="xascalc-workspace" aria-label="Animated workspace">
+                        <div class="xascalc-workspace-title">
+                            <strong>Workspace</strong>
+                            <span>xas_20260827T051827</span>
+                        </div>
+                        <div class="xascalc-tabs" role="tablist" aria-label="Workspace tabs">
+                            <button class="active" type="button" data-xascalc-tab="tools">Tools</button>
+                            <button type="button" data-xascalc-tab="files">Files</button>
+                            <button type="button" data-xascalc-tab="run">Run</button>
+                        </div>
+                        <div class="xascalc-tab-panel active" data-xascalc-panel="tools">
+                            <div class="xascalc-feed-row xascalc-feed-1"><strong>resolve_structure</strong><span>complete</span></div>
+                            <div class="xascalc-feed-row xascalc-feed-2"><strong>call_native_input_generator</strong><span>complete</span></div>
+                            <div class="xascalc-feed-row xascalc-feed-3"><strong>self_check_generated_inputs</strong><span>passed</span></div>
+                            <div class="xascalc-feed-row xascalc-feed-4"><strong>submit_hpc_job</strong><span>job 1103</span></div>
+                            <div class="xascalc-feed-row xascalc-feed-5"><strong>monitor_job</strong><span>finished</span></div>
+                            <div class="xascalc-feed-row xascalc-feed-6"><strong>plot_xas_result</strong><span>created</span></div>
+                        </div>
+                        <div class="xascalc-tab-panel" data-xascalc-panel="files">
+                            <div class="xascalc-file-row">ocean.in</div>
+                            <div class="xascalc-file-row">job.pbs</div>
+                            <div class="xascalc-file-row">run.log</div>
+                            <div class="xascalc-file-row">spectrum_normalized.png</div>
+                        </div>
+                        <div class="xascalc-tab-panel" data-xascalc-panel="run">
+                            <div class="xascalc-run-status">
+                                <strong>Completed</strong>
+                                <span>Califone · ALCF · OCEAN · Ti K edge</span>
+                                <span>Result plotted and returned to chat.</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Left Side Dot Navigation (Fixed Position on Scrolling) -->
     <nav class="dot-nav">
         <a href="#demo-drxas" class="dot-item active group-3" data-target="demo-drxas">
@@ -214,6 +363,10 @@
         <a href="#demo-xasbench" class="dot-item group-1" data-target="demo-xasbench">
             <span class="dot-indicator"></span>
             <span class="dot-label">XASbench</span>
+        </a>
+        <a href="#demo-xascalculation" class="dot-item group-4" data-target="demo-xascalculation">
+            <span class="dot-indicator"></span>
+            <span class="dot-label">XAScalculation</span>
         </a>
     </nav>
 
@@ -267,7 +420,7 @@
         </div>
     </footer>
 
-    <script src="script.js?v=48"></script>
+    <script src="script.js?v=49"></script>
 </body>
 
 </html>
