@@ -539,7 +539,7 @@ window.addEventListener('resize', () => {
 
 // --- Elegant Typewriter Effect ---
 const typewriterTextElement = document.getElementById('typewriter-text');
-const fullText = "The next generation AI companion<br>for X-ray absorption spectroscopy.";
+const fullText = "Toward an Agentic Ecosystem for Intelligent X-ray Absorption Spectroscopy";
 
 // Parse text to handle HTML tags like <br> natively
 const typeArray = [];
