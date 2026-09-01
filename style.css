@@ -226,11 +226,11 @@ body.modal-open {
     background: linear-gradient(90deg, #b5367a, #e65064, #f47461);
 }
 
-.menu-gradient-xasperiment {
+.menu-gradient-xasagents {
     background: linear-gradient(90deg, #7e2584, #a83280, #c83e75);
 }
 
-.menu-gradient-xasight {
+.menu-gradient-xassurrogate {
     background: linear-gradient(90deg, #1c1044, #3f0f70, #68177f);
 }
 
@@ -331,7 +331,7 @@ body.modal-open {
 
 .content {
     position: absolute;
-    top: calc(42% + 50px);
+    top: calc(42% + 20px);
     /* Raised 150px from +200px per user request */
     left: 50%;
     transform: translate(-50%, -50%);
@@ -798,13 +798,22 @@ html {
     scroll-margin-top: 0;
     width: 100%;
     overflow: hidden;
-    background: #ffffff;
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.12) 18%,
+        rgba(255, 255, 255, 0.5) 40%,
+        rgba(255, 255, 255, 0.88) 62%,
+        rgba(255, 255, 255, 1) 82%,
+        rgba(255, 255, 255, 1) 100%
+    );
     color: #111111;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 32px 0 28px;
+    margin-top: -330px;
+    padding: 32px 0 0;
     box-sizing: border-box;
     z-index: 25;
     isolation: isolate;
@@ -821,7 +830,7 @@ html {
 
 .ecosystem-modules {
     position: relative;
-    z-index: 4;
+    z-index: auto;
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0;
@@ -844,7 +853,15 @@ html {
     padding: 22px 24px;
     border: 0;
     border-radius: 8px;
-    background: transparent;
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.14) 16%,
+        rgba(255, 255, 255, 0.5) 36%,
+        rgba(255, 255, 255, 0.84) 58%,
+        rgba(255, 255, 255, 1) 78%,
+        rgba(255, 255, 255, 1) 100%
+    );
     color: #3b0f70;
     font-family: 'Google Sans', 'Outfit', sans-serif;
     text-align: center;
@@ -854,11 +871,31 @@ html {
     transition: background-color 0.2s ease;
 }
 
+.ecosystem-module::after {
+    content: "";
+    position: absolute;
+    top: calc(50% + 12px);
+    left: 50%;
+    z-index: 4;
+    width: 94%;
+    height: 150px;
+    transform: translate(-50%, -50%);
+    border-radius: 24px;
+    background: radial-gradient(
+        ellipse at center,
+        rgba(255, 255, 255, 0.8) 0%,
+        rgba(255, 255, 255, 0.64) 28%,
+        rgba(255, 255, 255, 0.28) 58%,
+        rgba(255, 255, 255, 0) 86%
+    );
+    pointer-events: none;
+}
+
 .ecosystem-module span {
     position: absolute;
     top: 50%;
     left: 50%;
-    z-index: 2;
+    z-index: 5;
     width: calc(100% - 44px);
     transform: translate(-50%, -50%);
     font-size: 1.34rem;
@@ -872,12 +909,12 @@ html {
     position: absolute;
     top: calc(50% + 28px);
     left: 50%;
-    z-index: 2;
+    z-index: 5;
     width: calc(100% - 44px);
     transform: translateX(-50%);
     color: #5f6368;
-    font-size: 0.78rem;
-    font-weight: 500;
+    font-size: 1.05rem;
+    font-weight: 600;
     line-height: 1.2;
     text-align: center;
 }
@@ -885,7 +922,6 @@ html {
 .ecosystem-module:hover,
 .ecosystem-module:focus-visible,
 .ecosystem-module.is-active {
-    background: rgba(255, 255, 255, 0.16);
     box-shadow: none;
     outline: none;
 }
@@ -916,22 +952,22 @@ html {
     color: transparent;
 }
 
-.ecosystem-module-xasperiment {
+.ecosystem-module-xasagents {
     color: #9f2f83;
 }
 
-.ecosystem-module-xasperiment span {
+.ecosystem-module-xasagents span {
     background: linear-gradient(90deg, #7e2584, #a83280, #c83e75);
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
 }
 
-.ecosystem-module-xasight {
+.ecosystem-module-xassurrogate {
     color: #4f137b;
 }
 
-.ecosystem-module-xasight span {
+.ecosystem-module-xassurrogate span {
     background: linear-gradient(90deg, #1c1044, #3f0f70, #68177f);
     -webkit-background-clip: text;
     background-clip: text;
@@ -1204,7 +1240,7 @@ html {
 
     /* Hero Section */
     .content {
-        top: 50%;
+        top: calc(50% - 20px);
         /* Center purely vertically */
         width: 95%;
     }
@@ -1350,7 +1386,8 @@ html {
 
     .ecosystem-section {
         min-height: auto;
-        padding: 28px 20px;
+        margin-top: -110px;
+        padding: 28px 20px 0;
         max-width: 100vw;
     }
 
@@ -1375,6 +1412,6 @@ html {
     }
 
     .ecosystem-module small {
-        font-size: 0.68rem;
+        font-size: 0.86rem;
     }
 }
