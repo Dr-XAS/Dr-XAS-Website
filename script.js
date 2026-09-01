@@ -539,7 +539,7 @@ window.addEventListener('resize', () => {
 
 // --- Elegant Typewriter Effect ---
 const typewriterTextElement = document.getElementById('typewriter-text');
-const fullText = "Toward an Agentic Ecosystem for Intelligent X-ray Absorption Spectroscopy";
+const fullText = "Agentic Ecosystem";
 
 // Parse text to handle HTML tags like <br> natively
 const typeArray = [];
@@ -733,7 +733,8 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
 
     const ecoCtx = ecosystemCanvas.getContext('2d');
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const moduleOrder = ['XASpert', 'XASbench', 'XASperiment', 'XASight'];
+    const moduleOrder = ['XASpert', 'XASbench', 'XASagents', 'XASurrogate'];
+    const animateAllModules = true;
     const moduleConfig = {
         XASpert: {
             color: '#3b0f70',
@@ -743,11 +744,11 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
             color: '#f7705c',
             magmaRange: [0.5, 0.7]
         },
-        XASperiment: {
+        XASagents: {
             color: '#b73779',
             magmaRange: [0.32, 0.52]
         },
-        XASight: {
+        XASurrogate: {
             color: '#3b0f70',
             magmaRange: [0.12, 0.32]
         }
@@ -758,7 +759,6 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
     let ecoDpr = 1;
     let ecosystemParticles = [];
     let backgroundParticles = [];
-    let ecosystemLines = [];
     let waveTargets = {};
     let moduleRects = {};
     let activeModule = null;
@@ -838,28 +838,26 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
         };
     }
 
-    function shufflePoints(points) {
-        for (let i = points.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            const current = points[i];
-            points[i] = points[j];
-            points[j] = current;
-        }
-        return points;
-    }
-
     function buildTargetsForModule(moduleName) {
         const rect = getModuleRect(moduleName);
         const points = [];
-        const samples = isEcoMobile() ? 86 : 132;
-        const layers = isEcoMobile() ? 3 : 4;
+        const samples = isEcoMobile() ? 180 : 300;
+        const layers = moduleName === 'XASbench'
+            ? (isEcoMobile() ? 12 : 18)
+            : moduleName === 'XASagents'
+                ? (isEcoMobile() ? 10 : 14)
+                : (isEcoMobile() ? 5 : 8);
         const insetX = rect.width * 0.16;
-        const baseY = rect.y + rect.height * 0.64;
-        const amp = rect.height * 0.16;
+        const moduleYOffset = moduleName === 'XASbench' || moduleName === 'XASagents'
+            ? rect.height * 0.07
+            : 0;
+        const baseY = rect.y + rect.height * 0.64 + moduleYOffset;
+        const amp = rect.height * 0.22;
         const usableWidth = rect.width - insetX * 2;
 
         function waveform(module, t, layer) {
             const centered = t - 0.5;
+            const depth = (layer / Math.max(1, layers - 1) - 0.5) * 2;
             const layerPhase = layer * 0.42;
 
             if (module === 'XASpert') {
@@ -868,13 +866,35 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
             }
 
             if (module === 'XASbench') {
-                const sigmoid = 1 / (1 + Math.exp(-(t - 0.5) * 10));
-                return (sigmoid - 0.5) * 1.45 + Math.sin(t * Math.PI * 2 + layerPhase) * 0.16;
+                const xTerm = Math.pow(centered / 0.16, 2);
+                const zTerm = Math.pow(depth / 0.52, 2);
+                return Math.exp(-0.5 * (xTerm + zTerm)) * 1.18;
             }
 
-            if (module === 'XASperiment') {
-                const envelope = Math.exp(-Math.pow(centered * 3.1, 2));
-                return Math.sin(t * Math.PI * 8.2 + layerPhase) * envelope * 0.9;
+            if (module === 'XASagents') {
+                const frontLeftGaussian = Math.exp(-0.5 * (
+                    Math.pow((centered + 0.25) / 0.13, 2)
+                    + Math.pow((depth + 0.54) / 0.27, 2)
+                ));
+                const frontRightGaussian = Math.exp(-0.5 * (
+                    Math.pow((centered - 0.25) / 0.13, 2)
+                    + Math.pow((depth + 0.54) / 0.27, 2)
+                ));
+                const backLeftGaussian = Math.exp(-0.5 * (
+                    Math.pow((centered + 0.25) / 0.13, 2)
+                    + Math.pow((depth - 0.54) / 0.27, 2)
+                ));
+                const backRightGaussian = Math.exp(-0.5 * (
+                    Math.pow((centered - 0.25) / 0.13, 2)
+                    + Math.pow((depth - 0.54) / 0.27, 2)
+                ));
+
+                return (
+                    frontLeftGaussian
+                    + frontRightGaussian
+                    + backLeftGaussian
+                    + backRightGaussian
+                ) * 0.74;
             }
 
             const peakA = Math.exp(-Math.pow((t - 0.25) / 0.08, 2));
@@ -892,33 +912,46 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
                 const y = baseY - waveform(moduleName, t, layer) * amp + layerOffset;
 
                 points.push({
-                    x: x + (Math.random() - 0.5) * 2.8,
-                    y: clamp(y + (Math.random() - 0.5) * 3.2, rect.y + rect.height * 0.36, rect.y + rect.height * 0.86),
-                    z: (layer - (layers - 1) / 2) * rect.height * 0.08 + (Math.random() - 0.5) * rect.height * 0.04
+                    x,
+                    y: clamp(y, rect.y + rect.height * 0.3, rect.y + rect.height * 0.9),
+                    z: (layer - (layers - 1) / 2) * rect.height * (moduleName === 'XASbench' ? 0.045 : 0.08)
                 });
             }
         }
 
-        return shufflePoints(points);
+        points.samples = samples;
+        points.layers = layers;
+        return points;
     }
 
-    function rotatedWaveTarget(moduleName, target, time) {
-        if (reducedMotion.matches) return target;
-
+    function getWaveTransform(moduleName, time) {
         const rect = getModuleRect(moduleName);
         const cx = rect.cx;
-        const cy = rect.y + rect.height * 0.64;
+        const moduleYOffset = moduleName === 'XASbench' || moduleName === 'XASagents'
+            ? rect.height * 0.07
+            : 0;
+        const cy = rect.y + rect.height * 0.64 + moduleYOffset;
+        const t = time * 0.00032;
+        const indexOffset = moduleOrder.indexOf(moduleName) * 0.55;
+        const angleY = reducedMotion.matches ? 0 : Math.sin(t + indexOffset) * 0.52;
+        const angleX = reducedMotion.matches ? 0 : Math.cos(t * 0.82 + indexOffset) * 0.22;
+
+        return {
+            rect,
+            cx,
+            cy,
+            cosY: Math.cos(angleY),
+            sinY: Math.sin(angleY),
+            cosX: Math.cos(angleX),
+            sinX: Math.sin(angleX)
+        };
+    }
+
+    function rotatedWaveTarget(target, transform) {
+        const { rect, cx, cy, cosY, sinY, cosX, sinX } = transform;
         const dx = target.x - cx;
         const dy = target.y - cy;
         const dz = target.z || 0;
-        const t = time * 0.00028;
-        const indexOffset = moduleOrder.indexOf(moduleName) * 0.55;
-        const angleY = Math.sin(t + indexOffset) * 0.52;
-        const angleX = Math.cos(t * 0.82 + indexOffset) * 0.22;
-        const cosY = Math.cos(angleY);
-        const sinY = Math.sin(angleY);
-        const cosX = Math.cos(angleX);
-        const sinX = Math.sin(angleX);
         const rx = dx * cosY + dz * sinY;
         const rz = dz * cosY - dx * sinY;
         const ry = dy * cosX - rz * sinX;
@@ -948,54 +981,13 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
         };
     }
 
-    function buildEcosystemLines(moduleParticles, rect) {
-        const maxDistance = Math.min(rect.width, rect.height) * (isEcoMobile() ? 0.22 : 0.2);
-        const maxDistanceSq = maxDistance * maxDistance;
-
-        for (let i = 0; i < moduleParticles.length; i += 2) {
-            const particle = moduleParticles[i];
-            let nearest = null;
-            let nearestDistanceSq = Infinity;
-            let secondNearest = null;
-            let secondDistanceSq = Infinity;
-
-            for (let j = i + 1; j < moduleParticles.length; j++) {
-                const candidate = moduleParticles[j];
-                const dx = particle.baseX - candidate.baseX;
-                const dy = particle.baseY - candidate.baseY;
-                const distanceSq = dx * dx + dy * dy;
-
-                if (distanceSq > maxDistanceSq) continue;
-
-                if (distanceSq < nearestDistanceSq) {
-                    secondNearest = nearest;
-                    secondDistanceSq = nearestDistanceSq;
-                    nearest = candidate;
-                    nearestDistanceSq = distanceSq;
-                } else if (distanceSq < secondDistanceSq) {
-                    secondNearest = candidate;
-                    secondDistanceSq = distanceSq;
-                }
-            }
-
-            if (nearest && Math.random() > 0.12) {
-                ecosystemLines.push([particle, nearest]);
-            }
-
-            if (secondNearest && Math.random() > 0.76) {
-                ecosystemLines.push([particle, secondNearest]);
-            }
-        }
-    }
-
     function resetParticles() {
         updateModuleRects();
 
-        const moduleParticleCount = isEcoMobile() ? 130 : 260;
+        const moduleParticleCount = isEcoMobile() ? 320 : 680;
         const backgroundCount = 0;
         ecosystemParticles = [];
         backgroundParticles = [];
-        ecosystemLines = [];
         waveTargets = {};
 
         moduleOrder.forEach(moduleName => {
@@ -1010,10 +1002,12 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
                 const centerDistance = Math.min(1, Math.sqrt(centerDx * centerDx + centerDy * centerDy));
                 const edgeDecay = Math.max(0.24, 1 - Math.pow(centerDistance, 1.45) * 0.62);
                 const edgeParticle = centerDistance > 0.82;
+                const waveIndex = Math.floor(i * waveTargets[moduleName].length / moduleParticleCount);
                 const particle = {
                     module: moduleName,
                     index: i,
-                    formsTarget: !edgeParticle && Math.random() > 0.28,
+                    waveIndex,
+                    formsTarget: !edgeParticle && Math.random() > 0.06,
                     gravityStrength: 0.1 + Math.random() * 0.18,
                     colorVal: moduleMagmaValue(moduleName, Math.random()),
                     baseX: start.x,
@@ -1028,7 +1022,7 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
                     x: start.x,
                     y: start.y,
                     size: 0.32 + Math.random() * (isEcoMobile() ? 1.8 : 2.35),
-                    opacity: (0.14 + Math.random() * 0.34) * edgeDecay,
+                    opacity: (0.2 + Math.random() * 0.4) * edgeDecay,
                     renderAlpha: 0
                 };
 
@@ -1036,7 +1030,6 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
                 moduleParticles.push(particle);
             }
 
-            buildEcosystemLines(moduleParticles, rect);
         });
 
         for (let i = 0; i < backgroundCount; i++) {
@@ -1096,8 +1089,95 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
         window.setTimeout(scrollEcosystemToTop, 320);
     }
 
+    function createLineFadeGradient(start, end, colorVal, alpha) {
+        const gradient = ecoCtx.createLinearGradient(start.x, start.y, end.x, end.y);
+        gradient.addColorStop(0, getMagmaColorRGBA(colorVal, 0));
+        gradient.addColorStop(0.1, getMagmaColorRGBA(colorVal, 0));
+        gradient.addColorStop(0.24, getMagmaColorRGBA(colorVal, alpha * 0.34));
+        gradient.addColorStop(0.36, getMagmaColorRGBA(colorVal, alpha));
+        gradient.addColorStop(0.64, getMagmaColorRGBA(colorVal, alpha));
+        gradient.addColorStop(0.76, getMagmaColorRGBA(colorVal, alpha * 0.34));
+        gradient.addColorStop(0.9, getMagmaColorRGBA(colorVal, 0));
+        gradient.addColorStop(1, getMagmaColorRGBA(colorVal, 0));
+        return gradient;
+    }
+
+    function drawWaveGrid(moduleName, rotatedTargets) {
+        const targets = waveTargets[moduleName];
+        const samples = targets.samples;
+        const layers = targets.layers;
+        const colorVal = moduleMagmaValue(moduleName, 0.58);
+        const columnStep = isEcoMobile() ? 12 : 10;
+
+        ecoCtx.lineWidth = isEcoMobile() ? 0.72 : 0.9;
+        for (let layer = 0; layer < layers; layer++) {
+            ecoCtx.beginPath();
+            let firstPoint = null;
+            let lastPoint = null;
+
+            for (let sample = 0; sample < samples; sample++) {
+                const point = rotatedTargets[layer * samples + sample];
+                if (!point) continue;
+
+                if (!firstPoint) {
+                    firstPoint = point;
+                    ecoCtx.moveTo(point.x, point.y);
+                } else {
+                    ecoCtx.lineTo(point.x, point.y);
+                }
+                lastPoint = point;
+            }
+
+            if (firstPoint && lastPoint) {
+                const depthPosition = layer / Math.max(1, layers - 1);
+                const depthFade = Math.pow(Math.sin(depthPosition * Math.PI), 1.25);
+                ecoCtx.strokeStyle = createLineFadeGradient(firstPoint, lastPoint, colorVal, 0.3 * depthFade);
+                ecoCtx.stroke();
+            }
+        }
+
+        ecoCtx.lineWidth = isEcoMobile() ? 0.55 : 0.7;
+
+        for (let sample = 0; sample < samples; sample += columnStep) {
+            ecoCtx.beginPath();
+            let firstPoint = null;
+            let lastPoint = null;
+
+            for (let layer = 0; layer < layers; layer++) {
+                const point = rotatedTargets[layer * samples + sample];
+                if (!point) continue;
+
+                if (!firstPoint) {
+                    firstPoint = point;
+                    ecoCtx.moveTo(point.x, point.y);
+                } else {
+                    ecoCtx.lineTo(point.x, point.y);
+                }
+                lastPoint = point;
+            }
+
+            if (firstPoint && lastPoint) {
+                const horizontalPosition = sample / Math.max(1, samples - 1);
+                const horizontalFade = Math.pow(Math.sin(horizontalPosition * Math.PI), 1.15);
+                ecoCtx.strokeStyle = createLineFadeGradient(
+                    firstPoint,
+                    lastPoint,
+                    colorVal * 0.92,
+                    0.2 * horizontalFade
+                );
+                ecoCtx.stroke();
+            }
+        }
+    }
+
     function drawEcosystem(time) {
         ecoCtx.clearRect(0, 0, ecoWidth, ecoHeight);
+
+        const rotatedTargets = {};
+        moduleOrder.forEach(moduleName => {
+            const transform = getWaveTransform(moduleName, time);
+            rotatedTargets[moduleName] = waveTargets[moduleName].map(target => rotatedWaveTarget(target, transform));
+        });
 
         backgroundParticles.forEach(point => {
             const motionTime = reducedMotion.matches ? 0 : time;
@@ -1109,42 +1189,14 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
             ecoCtx.fill();
         });
 
-        ecoCtx.lineWidth = isEcoMobile() ? 0.65 : 0.8;
-        ecosystemLines.forEach(pair => {
-            const p1 = pair[0];
-            const p2 = pair[1];
-            const dx = p1.x - p2.x;
-            const dy = p1.y - p2.y;
-            const distSq = dx * dx + dy * dy;
-            const maxDistSq = isEcoMobile() ? 4200 : 6200;
-
-            if (distSq > maxDistSq) return;
-
-            const activeLine = activeModule === p1.module;
-            const avgColorVal = (p1.colorVal + p2.colorVal) / 2;
-            const baseAlpha = Math.min(p1.renderAlpha || p1.opacity, p2.renderAlpha || p2.opacity);
-            const distanceFade = Math.max(0, 1 - distSq / maxDistSq);
-            const alpha = Math.min(0.2, avgColorVal * baseAlpha * distanceFade * (activeLine ? 0.36 : 0.52));
-
-            if (alpha <= 0.01) return;
-
-            ecoCtx.beginPath();
-            ecoCtx.moveTo(p1.x, p1.y);
-
-            const ctrlX = (p1.x + p2.x) / 2;
-            const ctrlY = (p1.y + p2.y) / 2 + Math.min(18, Math.sqrt(distSq) * 0.16);
-            ecoCtx.quadraticCurveTo(ctrlX, ctrlY, p2.x, p2.y);
-            ecoCtx.strokeStyle = getMagmaColorRGBA(avgColorVal * 0.9, alpha);
-            ecoCtx.stroke();
-        });
+        moduleOrder.forEach(moduleName => drawWaveGrid(moduleName, rotatedTargets[moduleName]));
 
         ecosystemParticles.forEach(particle => {
             let target = randomTargetForParticle(particle, time);
-            const isActive = activeModule === particle.module;
+            const isActive = animateAllModules || activeModule === particle.module;
 
             if (isActive && waveTargets[particle.module].length > 0) {
-                const waveIndex = (particle.index * 3 + Math.floor(particle.phase * 11)) % waveTargets[particle.module].length;
-                const waveTarget = rotatedWaveTarget(particle.module, waveTargets[particle.module][waveIndex], time);
+                const waveTarget = rotatedTargets[particle.module][particle.waveIndex];
 
                 if (particle.formsTarget) {
                     target = waveTarget;
@@ -1160,7 +1212,7 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
             particle.x += (target.x - particle.x) * easing;
             particle.y += (target.y - particle.y) * easing;
 
-            const alpha = isActive && particle.formsTarget ? 0.76 : particle.opacity * (isActive ? 0.82 : 1);
+            const alpha = isActive && particle.formsTarget ? 0.9 : particle.opacity * (isActive ? 0.94 : 1);
             const size = isActive && particle.formsTarget ? particle.size * 0.9 : particle.size;
             particle.renderAlpha = alpha;
             ecoCtx.fillStyle = getMagmaColorRGBA(particle.colorVal, alpha);
