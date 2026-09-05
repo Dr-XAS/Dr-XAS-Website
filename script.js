@@ -765,6 +765,7 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
     let lockedModule = null;
     let isEcosystemVisible = false;
     let frameId = null;
+    let ecosystemAnimationStartTime = null;
 
     function moduleMagmaValue(moduleName, seed) {
         const range = moduleConfig[moduleName].magmaRange;
@@ -888,13 +889,17 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
                     Math.pow((centered - 0.25) / 0.13, 2)
                     + Math.pow((depth - 0.54) / 0.27, 2)
                 ));
+                const centerValley = Math.exp(-0.5 * (
+                    Math.pow(centered / 0.16, 2)
+                    + Math.pow(depth / 0.34, 2)
+                )) * 1;
 
                 return (
                     frontLeftGaussian
                     + frontRightGaussian
                     + backLeftGaussian
                     + backRightGaussian
-                ) * 0.74;
+                ) * 0.9 - centerValley;
             }
 
             const peakA = Math.exp(-Math.pow((t - 0.25) / 0.08, 2));
@@ -904,7 +909,9 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
         }
 
         for (let layer = 0; layer < layers; layer++) {
-            const layerOffset = (layer - (layers - 1) / 2) * (isEcoMobile() ? 4 : 5);
+            const layerOffset = moduleName === 'XASagents'
+                ? 0
+                : (layer - (layers - 1) / 2) * (isEcoMobile() ? 4 : 5);
 
             for (let i = 0; i < samples; i++) {
                 const t = i / Math.max(1, samples - 1);
@@ -933,8 +940,13 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
         const cy = rect.y + rect.height * 0.64 + moduleYOffset;
         const t = time * 0.00032;
         const indexOffset = moduleOrder.indexOf(moduleName) * 0.55;
-        const angleY = reducedMotion.matches ? 0 : Math.sin(t + indexOffset) * 0.52;
+        const angleY = moduleName === 'XASagents'
+            ? Math.PI / 18 + (reducedMotion.matches ? 0 : Math.sin(t) * 0.18)
+            : (reducedMotion.matches ? 0 : Math.sin(t + indexOffset) * 0.52);
         const angleX = reducedMotion.matches ? 0 : Math.cos(t * 0.82 + indexOffset) * 0.22;
+        const perspectiveDepth = moduleName === 'XASagents'
+            ? Math.max(720, rect.width * 6)
+            : Math.max(240, rect.width * 1.8);
 
         return {
             rect,
@@ -943,12 +955,13 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
             cosY: Math.cos(angleY),
             sinY: Math.sin(angleY),
             cosX: Math.cos(angleX),
-            sinX: Math.sin(angleX)
+            sinX: Math.sin(angleX),
+            perspectiveDepth
         };
     }
 
     function rotatedWaveTarget(target, transform) {
-        const { rect, cx, cy, cosY, sinY, cosX, sinX } = transform;
+        const { rect, cx, cy, cosY, sinY, cosX, sinX, perspectiveDepth } = transform;
         const dx = target.x - cx;
         const dy = target.y - cy;
         const dz = target.z || 0;
@@ -956,7 +969,7 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
         const rz = dz * cosY - dx * sinY;
         const ry = dy * cosX - rz * sinX;
         const rz2 = rz * cosX + dy * sinX;
-        const perspective = 1 / (1 + rz2 / Math.max(240, rect.width * 1.8));
+        const perspective = 1 / (1 + rz2 / perspectiveDepth);
 
         return {
             x: cx + rx * perspective,
@@ -1223,8 +1236,11 @@ if (dotNav && dotItems.length > 0 && demoSections.length > 0) {
     }
 
     function animateEcosystem(time) {
+        if (ecosystemAnimationStartTime === null) ecosystemAnimationStartTime = time || 0;
+        const elapsedTime = Math.max(0, (time || 0) - ecosystemAnimationStartTime);
+
         if (isEcosystemVisible || reducedMotion.matches) {
-            drawEcosystem(time || 0);
+            drawEcosystem(elapsedTime);
         }
 
         frameId = requestAnimationFrame(animateEcosystem);
