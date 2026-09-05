@@ -385,7 +385,7 @@ h1.typing-container {
 /* Transparent Text with Magma Gradient */
 .magma-text {
     /* Subtle Magma gradient: Mostly dark grey, blending into magma colors at the very end */
-    background: linear-gradient(110deg, #1f1f1f 0%, #1f1f1f 65%, #3b0f70 80%, #b73779 92%, #f7705c 100%) !important;
+    background: linear-gradient(110deg, #1f1f1f 0%, #1f1f1f 38%, #3b0f70 52%, #b73779 75%, #f7705c 100%) !important;
     -webkit-background-clip: text !important;
     -webkit-text-fill-color: transparent !important;
     background-clip: text !important;
