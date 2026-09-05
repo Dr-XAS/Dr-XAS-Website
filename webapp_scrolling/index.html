@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="两排反向循环滑动的 Dr.XAS 视频展示墙"
+    />
+    <title>Dr.XAS 双排视频动效</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        color-scheme: light;
+        --page-bg: #ffffff;
+        --card-gap: clamp(8px, 1vw, 20px);
+        --group-edge: clamp(4px, 0.5vw, 10px);
+        --ecosystem-height: calc(25vw + 32px);
+        --row-gap: calc(var(--ecosystem-height) * 0.72);
+        --video-scale: 1.12;
+        --video-offset-y: 30px;
+        --corner: 0px;
+        --travel-time: 42s;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+      }
+
+      body {
+        overflow: hidden;
+        background: var(--page-bg);
+        font-family: "Google Sans", "Google Sans Text", "Outfit", Roboto, Arial, sans-serif;
+      }
+
+      .motion-wall {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 100%;
+        min-height: 100svh;
+        gap: var(--row-gap);
+        padding-block: clamp(16px, 3vh, 36px);
+        isolation: isolate;
+      }
+
+      .ecosystem-strip {
+        position: absolute;
+        z-index: 4;
+        top: 50%;
+        left: 50%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: var(--ecosystem-height);
+        overflow: hidden;
+        padding: 32px 0 0;
+        background: linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.12) 18%,
+          rgba(255, 255, 255, 0.5) 40%,
+          rgba(255, 255, 255, 0.88) 62%,
+          rgba(255, 255, 255, 1) 82%,
+          rgba(255, 255, 255, 1) 100%
+        );
+        transform: translate(-50%, -50%);
+        isolation: isolate;
+      }
+
+      #ecosystemCanvas {
+        position: absolute;
+        z-index: 1;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      .ecosystem-modules {
+        position: relative;
+        z-index: auto;
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 0;
+        width: 100vw;
+        margin: 0 calc(50% - 50vw);
+        pointer-events: auto;
+      }
+
+      .ecosystem-module {
+        position: relative;
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 0;
+        aspect-ratio: 1 / 1;
+        padding: 22px 24px;
+        border: 0;
+        border-radius: 8px;
+        overflow: hidden;
+        background: linear-gradient(
+          to bottom,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.14) 16%,
+          rgba(255, 255, 255, 0.5) 36%,
+          rgba(255, 255, 255, 0.84) 58%,
+          rgba(255, 255, 255, 1) 78%,
+          rgba(255, 255, 255, 1) 100%
+        );
+        color: #3b0f70;
+        font-family: "Google Sans", "Outfit", sans-serif;
+        text-align: center;
+        cursor: pointer;
+        box-shadow: none;
+        transition: background-color 0.2s ease;
+      }
+
+      .ecosystem-module::after {
+        position: absolute;
+        z-index: 4;
+        top: calc(50% + 12px);
+        left: 50%;
+        width: 94%;
+        height: 150px;
+        border-radius: 24px;
+        background: radial-gradient(
+          ellipse at center,
+          rgba(255, 255, 255, 0.96) 0%,
+          rgba(255, 255, 255, 0.86) 32%,
+          rgba(255, 255, 255, 0.55) 60%,
+          rgba(255, 255, 255, 0.22) 82%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        content: "";
+        transform: translate(-50%, -50%);
+        pointer-events: none;
+      }
+
+      .ecosystem-module span {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        z-index: 5;
+        width: calc(100% - 44px);
+        transform: translate(-50%, -50%);
+        font-size: 1.34rem;
+        font-weight: 700;
+        line-height: 1.1;
+        text-align: center;
+        overflow-wrap: break-word;
+      }
+
+      .ecosystem-module small {
+        position: absolute;
+        z-index: 5;
+        top: calc(50% + 28px);
+        left: 50%;
+        width: calc(100% - 44px);
+        transform: translateX(-50%);
+        color: #5f6368;
+        font-size: 1.15rem;
+        font-weight: 600;
+        line-height: 1.2;
+        text-align: center;
+      }
+
+      .ecosystem-module:hover,
+      .ecosystem-module:focus-visible,
+      .ecosystem-module.is-active {
+        box-shadow: none;
+        outline: none;
+      }
+
+      .ecosystem-module.is-active small {
+        color: #3c4043;
+      }
+
+      .ecosystem-module-xaspert {
+        color: #f88961;
+      }
+
+      .ecosystem-module-xaspert span {
+        background: linear-gradient(90deg, #f36f63, #fd9b6b, #fec287);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .ecosystem-module-xasbench {
+        color: #df4c70;
+      }
+
+      .ecosystem-module-xasbench span {
+        background: linear-gradient(90deg, #b5367a, #e65064, #f47461);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .ecosystem-module-xasagents {
+        color: #9f2f83;
+      }
+
+      .ecosystem-module-xasagents span {
+        background: linear-gradient(90deg, #7e2584, #a83280, #c83e75);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .ecosystem-module-xassurrogate {
+        color: #4f137b;
+      }
+
+      .ecosystem-module-xassurrogate span {
+        background: linear-gradient(90deg, #1c1044, #3f0f70, #68177f);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+
+      .motion-wall::before,
+      .motion-wall::after {
+        position: fixed;
+        z-index: 6;
+        top: 0;
+        bottom: 0;
+        width: clamp(36px, 6vw, 120px);
+        content: "";
+        pointer-events: none;
+      }
+
+      .motion-wall::before {
+        left: 0;
+        background: linear-gradient(90deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0));
+      }
+
+      .motion-wall::after {
+        right: 0;
+        background: linear-gradient(270deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0));
+      }
+
+      .marquee {
+        position: relative;
+        z-index: 5;
+        width: 100%;
+        transform: translateY(var(--video-offset-y)) scale(var(--video-scale));
+        transform-origin: center center;
+      }
+
+      .marquee__track {
+        display: flex;
+        width: max-content;
+        will-change: transform;
+        transform: translate3d(0, 0, 0);
+        backface-visibility: hidden;
+      }
+
+      .marquee--right .marquee__track {
+        animation: slide-right var(--travel-time) linear infinite;
+      }
+
+      .marquee--left .marquee__track {
+        animation: slide-left var(--travel-time) linear infinite;
+      }
+
+      .video-group {
+        display: grid;
+        flex: 0 0 100vw;
+        width: 100vw;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: var(--card-gap);
+        padding-inline: var(--group-edge);
+      }
+
+      .video-card {
+        position: relative;
+        height: auto;
+        aspect-ratio: 5 / 3;
+        min-width: 0;
+        margin: 0;
+        overflow: hidden;
+        border: 0;
+        border-radius: var(--corner);
+        background: #ffffff;
+        box-shadow:
+          0 12px 32px rgba(0, 0, 0, 0.09),
+          0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+
+      .video-card::after {
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.06), transparent 18%);
+        content: "";
+        pointer-events: none;
+      }
+
+      .video-card video {
+        position: absolute;
+        inset: 0;
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        background: #ffffff;
+      }
+
+      @keyframes slide-right {
+        from {
+          transform: translate3d(-50%, 0, 0);
+        }
+        to {
+          transform: translate3d(0, 0, 0);
+        }
+      }
+
+      @keyframes slide-left {
+        from {
+          transform: translate3d(0, 0, 0);
+        }
+        to {
+          transform: translate3d(-50%, 0, 0);
+        }
+      }
+
+      @media (max-aspect-ratio: 4 / 5) {
+        :root {
+          --card-gap: 6px;
+          --group-edge: 3px;
+          --corner: 0px;
+        }
+
+        .motion-wall {
+          padding-block: 30px;
+        }
+
+        .ecosystem-strip {
+          width: 100vw;
+        }
+
+        .video-card {
+          box-shadow:
+            0 9px 24px rgba(0, 0, 0, 0.08),
+            0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+      }
+
+      @media (max-width: 600px) {
+        .ecosystem-module {
+          padding: 8px 4px;
+        }
+
+        .ecosystem-module::after {
+          width: 98%;
+          height: 62%;
+        }
+
+        .ecosystem-module small {
+          display: none;
+        }
+
+        .ecosystem-module span {
+          width: calc(100% - 8px);
+          font-size: clamp(0.62rem, 2.7vw, 0.78rem);
+        }
+      }
+
+      @media (max-height: 500px) and (orientation: landscape) {
+        .motion-wall {
+          padding-block: 8px;
+        }
+
+        .video-card {
+          height: min(14svh, 58px);
+          aspect-ratio: auto;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .marquee__track {
+          animation: none !important;
+          transform: translate3d(0, 0, 0) !important;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="motion-wall" aria-label="Dr.XAS 视频动效展示墙">
+      <section class="marquee marquee--right" aria-label="向右滑动的视频">
+        <div class="marquee__track">
+          <div class="video-group">
+            <figure class="video-card">
+              <video autoplay muted loop playsinline preload="metadata" aria-label="XASBench 演示">
+                <source src="XASBench_2x_6x10.mp4" type="video/mp4" />
+              </video>
+            </figure>
+            <figure class="video-card">
+              <video autoplay muted loop playsinline preload="metadata" aria-label="XASPrep 演示">
+                <source src="XASPrep_2x_6x10.mp4" type="video/mp4" />
+              </video>
+            </figure>
+            <figure class="video-card">
+              <video autoplay muted loop playsinline preload="metadata" aria-label="Dr.XAS 演示">
+                <source src="DrXAS_demo_clean_31s_silent_6x10.mp4" type="video/mp4" />
+              </video>
+            </figure>
+            <figure class="video-card">
+              <video autoplay muted loop playsinline preload="metadata" aria-label="Dr.XAS 知识库演示">
+                <source src="DrXAS_knowledgebase_2x_6x10.mp4" type="video/mp4" />
+              </video>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <section class="ecosystem-section ecosystem-strip" aria-label="Dr. XAS ecosystem modules">
+        <canvas id="ecosystemCanvas" aria-hidden="true"></canvas>
+        <div class="ecosystem-modules" aria-label="Dr. XAS ecosystem modules">
+          <button class="ecosystem-module ecosystem-module-xaspert" type="button" data-ecosystem-module="XASpert"
+            aria-pressed="false">
+            <span>XASpert</span>
+            <small>Knowledge base &amp; Reasoning</small>
+          </button>
+          <button class="ecosystem-module ecosystem-module-xasbench" type="button" data-ecosystem-module="XASbench"
+            aria-pressed="false">
+            <span>XASbench</span>
+            <small>Datasets &amp; Benchmarks</small>
+          </button>
+          <button class="ecosystem-module ecosystem-module-xasagents" type="button" data-ecosystem-module="XASagents"
+            aria-pressed="false">
+            <span>XASagents</span>
+            <small>Agent Orchestration</small>
+          </button>
+          <button class="ecosystem-module ecosystem-module-xassurrogate" type="button" data-ecosystem-module="XASurrogate"
+            aria-pressed="false">
+            <span>XASurrogate</span>
+            <small>Physics-aware AI surrogates</small>
+          </button>
+        </div>
+      </section>
+
+      <section class="marquee marquee--left" aria-label="向左滑动的视频">
+        <div class="marquee__track">
+          <div class="video-group">
+            <figure class="video-card">
+              <video autoplay muted loop playsinline preload="metadata" aria-label="Dr.XAS XASCalculation 演示">
+                <source src="DrXAS_XAScalculation_demo_6x10.mp4" type="video/mp4" />
+              </video>
+            </figure>
+            <figure class="video-card">
+              <video autoplay muted loop playsinline preload="metadata" aria-label="Artifact Labeller 演示">
+                <source src="50s_artifact_labeller_6x10.mp4" type="video/mp4" />
+              </video>
+            </figure>
+            <figure class="video-card">
+              <video autoplay muted loop playsinline preload="metadata" aria-label="Scanner App 演示">
+                <source src="Scanner_App_Demo_4_Edited_Silent_Privacy_6x10.mp4" type="video/mp4" />
+              </video>
+            </figure>
+            <figure class="video-card">
+              <video autoplay muted loop playsinline preload="metadata" aria-label="FeffDB Web App 演示">
+                <source src="FeffDB_webapp_6x10.mp4" type="video/mp4" />
+              </video>
+            </figure>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const tracks = document.querySelectorAll(".marquee__track");
+
+      tracks.forEach((track) => {
+        const originalGroup = track.querySelector(".video-group");
+        const repeatedGroup = originalGroup.cloneNode(true);
+
+        repeatedGroup.setAttribute("aria-hidden", "true");
+        repeatedGroup.querySelectorAll("video").forEach((video) => {
+          video.removeAttribute("aria-label");
+          video.setAttribute("tabindex", "-1");
+        });
+
+        track.appendChild(repeatedGroup);
+      });
+
+      const resumeVideos = () => {
+        if (document.hidden) return;
+
+        document.querySelectorAll("video").forEach((video) => {
+          video.play().catch(() => {});
+        });
+      };
+
+      window.addEventListener("load", resumeVideos);
+      document.addEventListener("visibilitychange", resumeVideos);
+    </script>
+    <script src="ecosystem-strip.js?v=2"></script>
+  </body>
+</html>
