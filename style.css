@@ -629,6 +629,26 @@ html {
     scroll-behavior: smooth;
 }
 
+/* --- Scrolling Product Showcase --- */
+.scrolling-showcase-section {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    height: 100svh;
+    overflow: hidden;
+    background-color: #ffffff;
+    z-index: 20;
+}
+
+.scrolling-showcase-frame {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background-color: #ffffff;
+    pointer-events: none;
+}
+
 /* --- Added Video Section --- */
 .demo-section {
     position: relative;
